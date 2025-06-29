@@ -78,7 +78,7 @@ const HomePageContent: React.FC = () => {
               </button>
             </div>
 
-            <div className="mx-auto grid max-w-5xl gap-8 md:grid-cols-3">
+            <div className="mx-auto grid max-w-5xl gap-8 text-gray-700 md:grid-cols-3">
               <div className="rounded-lg bg-white p-6 shadow-md">
                 <div className="mb-4 text-3xl">📝</div>
                 <h3 className="mb-2 text-xl font-semibold">Write Reviews</h3>

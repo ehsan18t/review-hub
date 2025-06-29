@@ -125,52 +125,36 @@ const StudentProfileContent: React.FC = () => {
               Profile Information
             </h2>
             <div className="grid gap-6 md:grid-cols-2">
-              <div>
-                <label className="mb-2 block text-sm font-medium text-gray-700">
+              <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+                <h3 className="mb-2 text-sm font-medium text-gray-700">
                   Full Name
-                </label>
-                <input
-                  type="text"
-                  value={currentUser.name}
-                  disabled
-                  className="w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2"
-                />
+                </h3>
+                <p className="text-lg font-semibold text-gray-900">
+                  {currentUser.name}
+                </p>
               </div>
-              <div>
-                <label className="mb-2 block text-sm font-medium text-gray-700">
+              <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+                <h3 className="mb-2 text-sm font-medium text-gray-700">
                   Email
-                </label>
-                <input
-                  type="email"
-                  value={currentUser.email}
-                  disabled
-                  className="w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2"
-                />
+                </h3>
+                <p className="text-lg font-semibold text-gray-900">
+                  {currentUser.email}
+                </p>
               </div>
-              <div>
-                <label className="mb-2 block text-sm font-medium text-gray-700">
+              <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+                <h3 className="mb-2 text-sm font-medium text-gray-700">
                   Department
-                </label>
-                <input
-                  type="text"
-                  value={currentUser.department || "Not specified"}
-                  disabled
-                  className="w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2"
-                />
+                </h3>
+                <p className="text-lg font-semibold text-gray-900">
+                  {currentUser.department || "Not specified"}
+                </p>
               </div>
-              <div>
-                <label className="mb-2 block text-sm font-medium text-gray-700">
-                  Role
-                </label>
-                <input
-                  type="text"
-                  value={
-                    currentUser.role.charAt(0).toUpperCase() +
-                    currentUser.role.slice(1)
-                  }
-                  disabled
-                  className="w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2"
-                />
+              <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+                <h3 className="mb-2 text-sm font-medium text-gray-700">Role</h3>
+                <p className="text-lg font-semibold text-gray-900">
+                  {currentUser.role.charAt(0).toUpperCase() +
+                    currentUser.role.slice(1)}
+                </p>
               </div>
             </div>
             <div className="rounded-md border border-blue-200 bg-blue-50 p-4">
