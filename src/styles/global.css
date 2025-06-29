@@ -108,6 +108,8 @@ body {
 }
 
 select,
-option {
+option,
+input,
+textarea {
   @apply text-gray-700;
 }
