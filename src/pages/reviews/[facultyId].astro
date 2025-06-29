@@ -1,0 +1,19 @@
+---
+import ReviewsPage from "@/components/ReviewsPage";
+import MainLayout from "@/layouts/MainLayout.astro";
+
+export async function getStaticPaths() {
+  // In a real app, you'd fetch faculty data from your API
+  const faculty = [{ id: "f1" }, { id: "f2" }, { id: "f3" }, { id: "f4" }, { id: "f5" }];
+
+  return faculty.map((faculty) => ({
+    params: { facultyId: faculty.id },
+  }));
+}
+
+const { facultyId } = Astro.params;
+---
+
+<MainLayout>
+  <ReviewsPage facultyId={facultyId} client:load />
+</MainLayout>

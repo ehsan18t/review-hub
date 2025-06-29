@@ -3,6 +3,7 @@ import vercelAdapter from "@astrojs/vercel";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "astro/config";
 
+import react from "@astrojs/react";
 import icon from "astro-icon";
 
 import sitemap from "@astrojs/sitemap";
@@ -15,5 +16,5 @@ export default defineConfig({
   },
 
   adapter: vercelAdapter(),
-  integrations: [icon(), sitemap()],
+  integrations: [react(), icon(), sitemap()],
 });
