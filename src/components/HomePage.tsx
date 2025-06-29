@@ -175,7 +175,7 @@ const HomePageContent: React.FC = () => {
               <span className="mr-3 text-2xl">👀</span>
               <div>
                 <p className="text-sm text-gray-600">Reviews Read</p>
-                <p className="text-2xl font-bold text-purple-600">12</p>
+                <p className="text-2xl font-bold text-purple-600">0</p>
               </div>
             </div>
           </div>
