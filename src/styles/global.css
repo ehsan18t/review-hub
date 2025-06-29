@@ -106,3 +106,8 @@ body {
 *::-webkit-scrollbar-thumb:active {
   @apply bg-accent-500;
 }
+
+select,
+option {
+  @apply text-gray-700;
+}
