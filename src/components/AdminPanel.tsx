@@ -50,7 +50,7 @@ const UserManagementTable: React.FC = () => {
                         .join("")
                         .slice(0, 2)}
                     </div>
-                    {user.name}
+                    <span className="text-gray-700">{user.name}</span>
                   </div>
                 </td>
                 <td className="px-4 py-3 text-gray-600">{user.email}</td>
