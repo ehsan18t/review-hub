@@ -53,7 +53,7 @@ export const mockUsers: User[] = [
     email: "john.smith@university.edu",
     role: "student",
     department: "Computer Science",
-    reviewCredits: 5,
+    reviewCredits: 3,
   },
   {
     id: "2",
