@@ -1,0 +1,108 @@
+/* Fonts */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap");
+
+/* Tailwind CSS */
+@import "tailwindcss";
+
+@layer base {
+  :root,
+  [data-theme="dark"] {
+    color-scheme: light dark;
+
+    --background: 2, 21, 38; /* #021526 */
+    --foreground: 224, 230, 237; /* #E0E6ED */
+    --foreground-muted: 170, 183, 196; /* #AAB7C4 */
+    --secondary: 255, 111, 97; /* #ff6f61 */
+
+    --scroll-bg: rgb(var(--background));
+    --scroll-main: oklch(0.55 0.22 185);
+
+    /* Accent */
+    --accent-300: 0.95 0.08 185; /* oklch(0.95 0.08 185) */
+    --accent-500: 0.75 0.18 185; /* oklch(0.75 0.18 185) */
+    --accent-900: 0.55 0.22 185; /* oklch(0.55 0.22 185) */
+
+    /* Accent Hybrid */
+    --accent-bg: var(--accent-900);
+    --accent-text: var(--accent-300);
+    --accent-title: var(--accent-500);
+  }
+
+  [data-theme="light"] {
+    --background: 249 250 251; /* rgb(249 250 251) */
+    --background-muted: 0.967 0.003 264.542; /* oklch(0.967 0.003 264.542) */
+    --text: 17 24 39; /* rgb(17 24 39) */
+    --text-muted: 0.446 0.03 256.802; /* oklch(0.446 0.03 256.802) */
+
+    /* Accent Hybrid */
+    --accent-bg: var(--accent-300);
+    --accent-text: var(--accent-900);
+    --accent-title: var(--accent-900);
+  }
+}
+
+@theme {
+  /* Colors */
+  --color-background: rgb(var(--background));
+  --color-foreground: rgb(var(--foreground));
+  --color-foreground-muted: rgb(var(--foreground-muted));
+  --color-primary: rgb(var(--primary));
+  --color-primary-muted: rgb(var(--primary-muted));
+  --color-secondary: rgb(var(--secondary));
+
+  --color-accent-300: oklch(var(--accent-300));
+  --color-accent-500: oklch(var(--accent-500));
+  --color-accent-900: oklch(var(--accent-900));
+
+  --color-accent-bg: oklch(var(--accent-bg));
+  --color-accent-text: oklch(var(--accent-text));
+  --color-accent-title: oklch(var(--accent-title));
+
+  --font-Inter:
+    "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+
+  --animate-*: initial;
+}
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+@custom-variant hover (&:hover);
+
+body {
+  @apply grid min-h-screen min-w-full grid-rows-[auto_1fr_auto];
+  @apply bg-background text-foreground font-Inter scroll-smooth leading-6 antialiased;
+}
+
+/* Custom Scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scroll-main) var(--scroll-bg);
+  scroll-behavior: smooth;
+}
+
+/* Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+  width: 12px; /* Slightly thinner for a more modern look */
+  height: 12px; /* For horizontal scrollbars */
+}
+
+*::-webkit-scrollbar-track {
+  background: var(--scroll-bg);
+  border-radius: 8px;
+  margin: 4px 0; /* Add some margin for a floating look */
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--scroll-main);
+  border-radius: 8px;
+  border: 3px solid var(--scroll-bg);
+  transition: background-color 0.2s ease;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  @apply bg-accent-500;
+}
+
+*::-webkit-scrollbar-thumb:active {
+  @apply bg-accent-500;
+}

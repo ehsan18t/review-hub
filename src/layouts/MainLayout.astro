@@ -1,0 +1,46 @@
+---
+import "@/styles/global.css";
+---
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Robot/Sitemap -->
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://your-site-url.com/" />
+
+    <!-- Meta Info -->
+    <title>Your Site Name | Your Tagline Here</title>
+    <meta name="description" content="Brief description of your website. Add details about what your site offers to visitors." />
+    <meta name="keywords" content="keyword1, keyword2, keyword3, relevant, search, terms" />
+    <meta name="author" content="Your Organization Name" />
+
+    <!-- Theme Preference (default: Dark) -->
+    <meta name="theme" content="dark" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="darkreader-lock" content="dark" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:site_name" content="Site Name" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Your Page Title | Your Brand" />
+    <meta property="og:description" content="A compelling description of your page for social media sharing." />
+    <meta property="og:url" content="https://your-site-url.com/" />
+    <!-- <meta property="og:image" content="https://your-site-url.com/assets/og-image.png"> -->
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Your Twitter Title" />
+    <meta name="twitter:description" content="Brief description for Twitter sharing (max 200 characters)." />
+    <meta name="twitter:site" content="@yourusername" />
+    <!-- <meta name="twitter:image" content="https://your-site-url.com/assets/twitter-card.png"> -->
+  </head>
+
+  <body>
+    <slot />
+  </body>
+</html>
