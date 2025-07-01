@@ -12,6 +12,7 @@ import {
   HiOutlineViewGrid,
   HiOutlineX,
 } from "react-icons/hi";
+import { HiOutlineExclamationTriangle } from "react-icons/hi2";
 import { IoNotifications } from "react-icons/io5";
 import { TbCoinBitcoin } from "react-icons/tb";
 import NotificationSidebar from "./NotificationSidebar";
@@ -49,6 +50,11 @@ const Navigation: React.FC = () => {
       student: [
         { href: "/dashboard", label: "Dashboard", icon: HiOutlineViewGrid },
         { href: "/faculty", label: "Browse Faculty", icon: HiOutlineSearch },
+        {
+          href: "/my-disputes",
+          label: "My Disputes",
+          icon: HiOutlineExclamationTriangle,
+        },
         { href: "/profile", label: "Profile", icon: HiOutlineUser },
       ],
       faculty: [

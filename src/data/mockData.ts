@@ -69,7 +69,7 @@ export interface AIInsight {
 // Mock users (keeping existing data)
 export const mockUsers: User[] = [
   {
-    id: "f2",
+    id: "1",
     name: "John Smith",
     email: "john.smith@university.edu",
     role: "student",
@@ -87,7 +87,7 @@ export const mockUsers: User[] = [
     reviewCredits: 0,
   },
   {
-    id: "f3",
+    id: "3",
     name: "Admin User",
     email: "admin@university.edu",
     role: "admin",
@@ -97,7 +97,7 @@ export const mockUsers: User[] = [
     reviewCredits: 0,
   },
   {
-    id: "f4",
+    id: "2",
     name: "Emily Davis",
     email: "emily.davis@university.edu",
     role: "student",
@@ -226,7 +226,7 @@ export const mockDisputes: Dispute[] = [
     id: "d1",
     reviewId: "r3",
     facultyId: "f1",
-    studentId: "4",
+    studentId: "1",
     status: "pending",
     facultyReason:
       "This review contains false information about my teaching preparation. I maintain detailed lesson plans and always prepare thoroughly for classes.",
@@ -243,7 +243,7 @@ export const mockDisputes: Dispute[] = [
     id: "d2",
     reviewId: "r2",
     facultyId: "f2",
-    studentId: "4",
+    studentId: "1",
     status: "approved",
     facultyReason: "This review misrepresents the course difficulty level.",
     facultyEvidence:
