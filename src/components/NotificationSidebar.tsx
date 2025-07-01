@@ -82,17 +82,17 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
   const getNotificationColor = (type: Notification["type"]) => {
     switch (type) {
       case "review_approved":
-        return "text-green-600";
+        return "text-emerald-700 bg-emerald-100";
       case "review_rejected":
-        return "text-red-600";
+        return "text-red-700 bg-red-100";
       case "credit_earned":
-        return "text-green-600";
+        return "text-green-700 bg-green-100";
       case "credit_spent":
-        return "text-blue-600";
+        return "text-blue-700 bg-blue-100";
       case "system":
-        return "text-gray-600";
+        return "text-purple-700 bg-purple-100";
       default:
-        return "text-gray-600";
+        return "text-gray-700 bg-gray-100";
     }
   };
 
@@ -131,35 +131,41 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
   return (
     <>
       {/* Backdrop */}
-      <div className="fixed inset-0 z-40 bg-black/50" onClick={onClose} />
+      <div
+        className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm transition-all duration-300"
+        onClick={onClose}
+      />
 
       {/* Sidebar */}
-      <div className="fixed top-0 right-0 z-50 flex h-full w-80 flex-col bg-white shadow-xl">
+      <div className="animate-in slide-in-from-right fixed top-0 right-0 z-50 flex h-full w-96 transform flex-col bg-white shadow-2xl transition-all duration-300">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-gray-200 p-4">
-          <div className="flex items-center space-x-2">
-            <h2 className="text-lg font-semibold text-gray-900">
-              Notifications
-            </h2>
-            {unreadCount > 0 && (
-              <span className="rounded-full bg-red-500 px-2 py-1 text-xs text-white">
-                {unreadCount}
-              </span>
-            )}
+        <div className="flex items-center justify-between border-b-2 border-gray-100 bg-blue-50 px-6 py-6">
+          <div className="flex items-center space-x-4">
+            <div className="rounded-xl bg-blue-600 p-3 shadow-md transition-colors duration-200 hover:bg-blue-700">
+              <span className="text-xl">🔔</span>
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-gray-900">Notifications</h2>
+              {unreadCount > 0 && (
+                <span className="inline-flex items-center rounded-full bg-red-500 px-3 py-1 text-xs font-bold text-white shadow-sm">
+                  {unreadCount} new
+                </span>
+              )}
+            </div>
           </div>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600"
+            className="rounded-xl p-3 text-gray-400 transition-all duration-200 hover:scale-110 hover:bg-gray-100 hover:text-gray-600"
           >
-            <span className="text-xl">×</span>
+            <span className="text-xl font-bold">×</span>
           </button>
         </div>
 
         {/* Actions */}
-        <div className="border-b border-gray-200 p-4">
+        <div className="border-b border-gray-100 bg-gray-50 px-6 py-4">
           <button
             onClick={markAllAsRead}
-            className="text-sm font-medium text-blue-600 hover:text-blue-800"
+            className="text-sm font-bold text-blue-600 transition-all duration-200 hover:scale-105 hover:text-blue-800 disabled:cursor-not-allowed disabled:text-gray-400"
             disabled={unreadCount === 0}
           >
             Mark all as read
@@ -169,51 +175,64 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
         {/* Notifications List */}
         <div className="flex-1 overflow-y-auto">
           {notifications.length === 0 ? (
-            <div className="p-8 text-center">
-              <span className="mb-4 block text-4xl">🔔</span>
-              <h3 className="mb-2 text-lg font-semibold text-gray-900">
+            <div className="flex flex-col items-center justify-center p-12 text-center">
+              <div className="mb-8 rounded-full bg-gray-100 p-8 shadow-md">
+                <span className="text-5xl">🔔</span>
+              </div>
+              <h3 className="mb-3 text-xl font-bold text-gray-900">
                 No notifications
               </h3>
-              <p className="text-gray-600">
-                You'll see notifications here when you have them.
+              <p className="max-w-xs text-sm leading-relaxed text-gray-600">
+                You'll see notifications here when you have updates about
+                reviews, credits, and system messages.
               </p>
             </div>
           ) : (
-            <div className="divide-y divide-gray-200">
+            <div className="divide-y divide-gray-100">
               {notifications.map((notification) => (
                 <div
                   key={notification.id}
-                  className={`cursor-pointer p-4 hover:bg-gray-50 ${
+                  className={`cursor-pointer p-6 transition-all duration-200 hover:scale-105 hover:bg-gray-50 ${
                     !notification.read
-                      ? "border-l-4 border-blue-500 bg-blue-50"
+                      ? "border-l-4 border-blue-600 bg-blue-50/50"
                       : ""
                   }`}
                   onClick={() => markAsRead(notification.id)}
                 >
-                  <div className="flex items-start space-x-3">
-                    <span
-                      className={`text-xl ${getNotificationColor(notification.type)}`}
+                  <div className="flex items-start space-x-4">
+                    <div
+                      className={`rounded-xl p-3 shadow-sm transition-all duration-200 hover:scale-110 ${getNotificationColor(
+                        notification.type,
+                      )}`}
                     >
-                      {getNotificationIcon(notification.type)}
-                    </span>
+                      <span className="text-lg">
+                        {getNotificationIcon(notification.type)}
+                      </span>
+                    </div>
                     <div className="min-w-0 flex-1">
-                      <p
-                        className={`text-sm font-medium ${
-                          !notification.read ? "text-gray-900" : "text-gray-700"
-                        }`}
-                      >
-                        {notification.title}
-                      </p>
-                      <p className="mt-1 text-sm text-gray-600">
+                      <div className="flex items-start justify-between">
+                        <p
+                          className={`text-sm font-bold ${
+                            !notification.read
+                              ? "text-gray-900"
+                              : "text-gray-700"
+                          }`}
+                        >
+                          {notification.title}
+                        </p>
+                        {!notification.read && (
+                          <div className="mt-1 ml-2 h-3 w-3 flex-shrink-0 animate-pulse rounded-full bg-blue-600"></div>
+                        )}
+                      </div>
+                      <p className="mt-2 text-sm leading-relaxed text-gray-600">
                         {notification.message}
                       </p>
-                      <p className="mt-2 text-xs text-gray-500">
-                        {formatTime(notification.timestamp)}
-                      </p>
+                      <div className="mt-3 flex items-center space-x-2">
+                        <p className="text-xs font-bold tracking-wide text-gray-500 uppercase">
+                          {formatTime(notification.timestamp)}
+                        </p>
+                      </div>
                     </div>
-                    {!notification.read && (
-                      <div className="mt-2 h-2 w-2 rounded-full bg-blue-500"></div>
-                    )}
                   </div>
                 </div>
               ))}
@@ -222,9 +241,9 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="border-t border-gray-200 p-4">
+        <div className="border-t-2 border-gray-100 bg-gray-50 px-6 py-6">
           <button
-            className="w-full rounded-md bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-200"
+            className="w-full rounded-xl bg-blue-600 px-4 py-4 text-sm font-bold text-white shadow-md transition-all duration-200 hover:scale-105 hover:bg-blue-700 hover:shadow-lg focus:ring-4 focus:ring-blue-300 focus:outline-none"
             onClick={() => alert("View all notifications")}
           >
             View All Notifications
