@@ -54,17 +54,17 @@ const HomePageContent: React.FC = () => {
   if (!currentUser) {
     // Landing page for non-logged users
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-slate-50">
         <div className="mx-auto max-w-7xl px-4 py-20">
           <div className="text-center">
             <div className="mb-16">
               <div className="mx-auto mb-8 flex h-32 w-32 items-center justify-center rounded-full bg-blue-600 shadow-xl transition-all duration-300 hover:scale-110 hover:bg-blue-700">
                 <span className="text-6xl">🎓</span>
               </div>
-              <h1 className="mb-6 text-6xl font-bold tracking-tight text-gray-900">
+              <h1 className="mb-6 text-6xl font-bold tracking-tight text-slate-900">
                 Faculty Review Hub
               </h1>
-              <p className="mx-auto mb-12 max-w-3xl text-xl leading-relaxed text-gray-600">
+              <p className="mx-auto mb-12 max-w-3xl text-xl leading-relaxed text-slate-600">
                 A comprehensive platform for students to review faculty members
                 and help improve the university experience. Share your
                 experiences, read honest reviews, and make informed decisions
@@ -75,7 +75,7 @@ const HomePageContent: React.FC = () => {
             <div className="mb-20 flex flex-col items-center justify-center gap-6 sm:flex-row">
               <button
                 onClick={() => handleGetStarted("student")}
-                className="group relative overflow-hidden rounded-2xl bg-blue-600 px-10 py-4 text-lg font-bold text-white shadow-xl transition-all duration-300 hover:scale-105 hover:bg-blue-700 hover:shadow-2xl focus:ring-4 focus:ring-blue-300 focus:outline-none"
+                className="group relative overflow-hidden rounded-xl bg-blue-600 px-10 py-4 text-lg font-bold text-white shadow-lg transition-all duration-300 hover:scale-105 hover:bg-blue-700 hover:shadow-xl focus:ring-4 focus:ring-blue-200 focus:outline-none"
               >
                 <span className="relative z-10 flex items-center space-x-3">
                   <span>🎓</span>
@@ -84,7 +84,7 @@ const HomePageContent: React.FC = () => {
               </button>
               <button
                 onClick={() => handleGetStarted("faculty")}
-                className="group relative overflow-hidden rounded-2xl bg-emerald-600 px-10 py-4 text-lg font-bold text-white shadow-xl transition-all duration-300 hover:scale-105 hover:bg-emerald-700 hover:shadow-2xl focus:ring-4 focus:ring-emerald-300 focus:outline-none"
+                className="group relative overflow-hidden rounded-xl bg-emerald-600 px-10 py-4 text-lg font-bold text-white shadow-lg transition-all duration-300 hover:scale-105 hover:bg-emerald-700 hover:shadow-xl focus:ring-4 focus:ring-emerald-200 focus:outline-none"
               >
                 <span className="relative z-10 flex items-center space-x-3">
                   <span>👨‍🏫</span>
@@ -94,38 +94,38 @@ const HomePageContent: React.FC = () => {
             </div>
 
             <div className="mx-auto grid max-w-6xl gap-8 md:grid-cols-3">
-              <div className="group rounded-3xl border-2 border-transparent bg-gray-50 p-8 shadow-md transition-all duration-300 hover:-translate-y-2 hover:border-blue-200 hover:shadow-xl">
-                <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-blue-600 text-3xl shadow-lg transition-all duration-300 group-hover:scale-110 group-hover:bg-blue-700">
+              <div className="group rounded-2xl border border-slate-200 bg-white p-8 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:border-blue-300 hover:shadow-xl">
+                <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-blue-600 text-3xl shadow-md transition-all duration-300 group-hover:scale-110 group-hover:bg-blue-700">
                   📝
                 </div>
-                <h3 className="mb-4 text-xl font-bold text-gray-900 transition-colors duration-300 group-hover:text-blue-600">
+                <h3 className="mb-4 text-xl font-bold text-slate-900 transition-colors duration-300 group-hover:text-blue-600">
                   Write Reviews
                 </h3>
-                <p className="leading-relaxed text-gray-600">
+                <p className="leading-relaxed text-slate-600">
                   Share your experiences with faculty members and help fellow
                   students make informed decisions about their courses.
                 </p>
               </div>
-              <div className="group rounded-3xl border-2 border-transparent bg-gray-50 p-8 shadow-md transition-all duration-300 hover:-translate-y-2 hover:border-purple-200 hover:shadow-xl">
-                <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-purple-600 text-3xl shadow-lg transition-all duration-300 group-hover:scale-110 group-hover:bg-purple-700">
+              <div className="group rounded-2xl border border-slate-200 bg-white p-8 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:border-purple-300 hover:shadow-xl">
+                <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-purple-600 text-3xl shadow-md transition-all duration-300 group-hover:scale-110 group-hover:bg-purple-700">
                   👀
                 </div>
-                <h3 className="mb-4 text-xl font-bold text-gray-900 transition-colors duration-300 group-hover:text-purple-600">
+                <h3 className="mb-4 text-xl font-bold text-slate-900 transition-colors duration-300 group-hover:text-purple-600">
                   Read Reviews
                 </h3>
-                <p className="leading-relaxed text-gray-600">
+                <p className="leading-relaxed text-slate-600">
                   Access honest feedback from other students about faculty
                   teaching styles and course experiences.
                 </p>
               </div>
-              <div className="group rounded-3xl border-2 border-transparent bg-gray-50 p-8 shadow-md transition-all duration-300 hover:-translate-y-2 hover:border-emerald-200 hover:shadow-xl">
-                <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-600 text-3xl shadow-lg transition-all duration-300 group-hover:scale-110 group-hover:bg-emerald-700">
+              <div className="group rounded-2xl border border-slate-200 bg-white p-8 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:border-emerald-300 hover:shadow-xl">
+                <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-600 text-3xl shadow-md transition-all duration-300 group-hover:scale-110 group-hover:bg-emerald-700">
                   💰
                 </div>
-                <h3 className="mb-4 text-xl font-bold text-gray-900 transition-colors duration-300 group-hover:text-emerald-600">
+                <h3 className="mb-4 text-xl font-bold text-slate-900 transition-colors duration-300 group-hover:text-emerald-600">
                   Earn Credits
                 </h3>
-                <p className="leading-relaxed text-gray-600">
+                <p className="leading-relaxed text-slate-600">
                   Earn Review Credits by writing reviews and spend them to
                   access detailed feedback from others.
                 </p>
@@ -142,11 +142,11 @@ const HomePageContent: React.FC = () => {
     <div className="mx-auto max-w-7xl px-4 py-8">
       {/* Header */}
       <div className="mb-8">
-        <div className="rounded-3xl border border-blue-200 bg-blue-50 p-8 transition-all duration-300 hover:shadow-lg">
-          <h1 className="mb-3 text-4xl font-bold text-gray-900">
+        <div className="rounded-2xl border border-blue-200 bg-blue-50 p-8 transition-all duration-300 hover:shadow-lg">
+          <h1 className="mb-3 text-4xl font-bold text-slate-900">
             Welcome back, {currentUser.name}! 👋
           </h1>
-          <p className="text-lg text-gray-600">
+          <p className="text-lg text-slate-600">
             {currentUser.role === "student"
               ? "Find faculty members, read reviews, and share your experiences."
               : currentUser.role === "faculty"
@@ -161,7 +161,7 @@ const HomePageContent: React.FC = () => {
         <div className="max-w-lg">
           <label
             htmlFor="search"
-            className="mb-3 block text-sm font-bold text-gray-700"
+            className="mb-3 block text-sm font-bold text-slate-700"
           >
             Search Faculty
           </label>
@@ -172,10 +172,10 @@ const HomePageContent: React.FC = () => {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search by name or department..."
-              className="w-full rounded-2xl border-2 border-gray-300 px-4 py-4 pl-12 shadow-sm transition-all duration-200 hover:border-gray-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-200 focus:outline-none"
+              className="w-full rounded-xl border-2 border-slate-300 px-4 py-3 pl-12 shadow-sm transition-all duration-200 hover:border-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 focus:outline-none"
             />
             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
-              <span className="text-lg text-gray-400">🔍</span>
+              <span className="text-lg text-slate-400">🔍</span>
             </div>
           </div>
         </div>
@@ -184,9 +184,9 @@ const HomePageContent: React.FC = () => {
       {/* Quick Stats */}
       {currentUser.role === "student" && (
         <div className="mb-8 grid gap-6 md:grid-cols-4">
-          <div className="rounded-2xl border-2 border-emerald-200 bg-emerald-50 p-6 shadow-sm transition-all duration-300 hover:scale-105 hover:shadow-md">
+          <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-6 shadow-sm transition-all duration-300 hover:scale-105 hover:shadow-md">
             <div className="flex items-center">
-              <div className="mr-4 rounded-full bg-emerald-600 p-3 shadow-md">
+              <div className="mr-4 rounded-full bg-emerald-600 p-3 shadow-sm">
                 <span className="text-2xl">💰</span>
               </div>
               <div>
@@ -199,9 +199,9 @@ const HomePageContent: React.FC = () => {
               </div>
             </div>
           </div>
-          <div className="rounded-2xl border-2 border-blue-200 bg-blue-50 p-6 shadow-sm transition-all duration-300 hover:scale-105 hover:shadow-md">
+          <div className="rounded-xl border border-blue-200 bg-blue-50 p-6 shadow-sm transition-all duration-300 hover:scale-105 hover:shadow-md">
             <div className="flex items-center">
-              <div className="mr-4 rounded-full bg-blue-600 p-3 shadow-md">
+              <div className="mr-4 rounded-full bg-blue-600 p-3 shadow-sm">
                 <span className="text-2xl">📝</span>
               </div>
               <div>
@@ -212,9 +212,9 @@ const HomePageContent: React.FC = () => {
               </div>
             </div>
           </div>
-          <div className="rounded-2xl border-2 border-purple-200 bg-purple-50 p-6 shadow-sm transition-all duration-300 hover:scale-105 hover:shadow-md">
+          <div className="rounded-xl border border-purple-200 bg-purple-50 p-6 shadow-sm transition-all duration-300 hover:scale-105 hover:shadow-md">
             <div className="flex items-center">
-              <div className="mr-4 rounded-full bg-purple-600 p-3 shadow-md">
+              <div className="mr-4 rounded-full bg-purple-600 p-3 shadow-sm">
                 <span className="text-2xl">👀</span>
               </div>
               <div>
@@ -225,9 +225,9 @@ const HomePageContent: React.FC = () => {
               </div>
             </div>
           </div>
-          <div className="rounded-2xl border-2 border-orange-200 bg-orange-50 p-6 shadow-sm transition-all duration-300 hover:scale-105 hover:shadow-md">
+          <div className="rounded-xl border border-orange-200 bg-orange-50 p-6 shadow-sm transition-all duration-300 hover:scale-105 hover:shadow-md">
             <div className="flex items-center">
-              <div className="mr-4 rounded-full bg-orange-600 p-3 shadow-md">
+              <div className="mr-4 rounded-full bg-orange-600 p-3 shadow-sm">
                 <span className="text-2xl">🎯</span>
               </div>
               <div>
@@ -243,7 +243,7 @@ const HomePageContent: React.FC = () => {
 
       {/* Faculty Grid */}
       <div className="mb-8">
-        <h2 className="mb-8 text-3xl font-bold text-gray-900">
+        <h2 className="mb-8 text-3xl font-bold text-slate-900">
           Faculty Members
         </h2>
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
@@ -260,18 +260,18 @@ const HomePageContent: React.FC = () => {
 
       {filteredFaculty.length === 0 && (
         <div className="py-20 text-center">
-          <div className="mx-auto mb-8 flex h-24 w-24 items-center justify-center rounded-full bg-gray-100 shadow-md transition-all duration-300 hover:scale-110 hover:shadow-lg">
+          <div className="mx-auto mb-8 flex h-24 w-24 items-center justify-center rounded-full bg-slate-100 shadow-md transition-all duration-300 hover:scale-110 hover:shadow-lg">
             <span className="text-4xl">🔍</span>
           </div>
-          <h3 className="mb-4 text-2xl font-bold text-gray-900">
+          <h3 className="mb-4 text-2xl font-bold text-slate-900">
             No faculty found
           </h3>
-          <p className="mb-8 text-lg text-gray-600">
+          <p className="mb-8 text-lg text-slate-600">
             Try adjusting your search terms.
           </p>
           <button
             onClick={() => setSearchTerm("")}
-            className="rounded-xl bg-blue-600 px-8 py-3 font-bold text-white shadow-md transition-all duration-200 hover:scale-105 hover:bg-blue-700 hover:shadow-lg focus:ring-4 focus:ring-blue-300 focus:outline-none"
+            className="rounded-lg bg-blue-600 px-8 py-3 font-bold text-white shadow-md transition-all duration-200 hover:scale-105 hover:bg-blue-700 hover:shadow-lg focus:ring-4 focus:ring-blue-200 focus:outline-none"
           >
             Clear Search
           </button>
@@ -286,7 +286,7 @@ export { HomePageContent };
 const HomePage: React.FC = () => {
   return (
     <AppProvider>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-slate-50">
         <Navigation />
         <HomePageContent />
       </div>
