@@ -24,7 +24,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   // Initialize user from localStorage
   useEffect(() => {
-    const savedUserType = localStorage.getItem('userType') as 'student' | 'faculty' | 'admin' | null;
+    const savedUserType = localStorage.getItem("userType") as
+      | "student"
+      | "faculty"
+      | "admin"
+      | null;
     if (savedUserType) {
       const user = mockUsers.find((u) => u.role === savedUserType);
       if (user) {
@@ -39,9 +43,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const setCurrentUser = (user: User | null) => {
     setCurrentUserState(user);
     if (user) {
-      localStorage.setItem('userType', user.role);
+      localStorage.setItem("userType", user.role);
     } else {
-      localStorage.removeItem('userType');
+      localStorage.removeItem("userType");
     }
   };
 

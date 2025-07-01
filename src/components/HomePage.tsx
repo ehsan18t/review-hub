@@ -32,7 +32,7 @@ const HomePageContent: React.FC = () => {
     setSelectedFaculty(null);
   };
 
-  const handleGetStarted = (role: 'student' | 'faculty') => {
+  const handleGetStarted = (role: "student" | "faculty") => {
     const user = mockUsers.find((u) => u.role === role);
     if (user) {
       setCurrentUser(user);
@@ -72,13 +72,13 @@ const HomePageContent: React.FC = () => {
 
             <div className="mb-16 flex flex-col items-center justify-center gap-4 sm:flex-row">
               <button
-                onClick={() => handleGetStarted('student')}
+                onClick={() => handleGetStarted("student")}
                 className="rounded-lg bg-blue-600 px-8 py-4 text-lg font-semibold text-white shadow-lg transition-colors hover:bg-blue-700"
               >
                 Get Started as Student
               </button>
               <button
-                onClick={() => handleGetStarted('faculty')}
+                onClick={() => handleGetStarted("faculty")}
                 className="rounded-lg bg-green-600 px-8 py-4 text-lg font-semibold text-white shadow-lg transition-colors hover:bg-green-700"
               >
                 Get Started as Faculty
