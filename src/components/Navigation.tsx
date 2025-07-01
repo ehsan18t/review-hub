@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import {
   HiOutlineAcademicCap,
   HiOutlineChevronDown,
-  HiOutlineCog,
   HiOutlineDocumentText,
   HiOutlineMenu,
   HiOutlineSearch,
@@ -50,7 +49,7 @@ const Navigation: React.FC = () => {
       student: [
         { href: "/dashboard", label: "Dashboard", icon: HiOutlineViewGrid },
         { href: "/faculty", label: "Browse Faculty", icon: HiOutlineSearch },
-        { href: "/profile", label: "My Profile", icon: HiOutlineUser },
+        { href: "/profile", label: "Profile", icon: HiOutlineUser },
       ],
       faculty: [
         {
@@ -63,7 +62,7 @@ const Navigation: React.FC = () => {
           label: "My Reviews",
           icon: HiOutlineDocumentText,
         },
-        { href: "/faculty-profile", label: "Edit Profile", icon: HiOutlineCog },
+        { href: "/profile", label: "Profile", icon: HiOutlineUser },
       ],
       admin: [
         { href: "/admin", label: "Admin Panel", icon: HiOutlineViewGrid },
@@ -77,6 +76,7 @@ const Navigation: React.FC = () => {
           label: "Manage Users",
           icon: HiOutlineUserGroup,
         },
+        { href: "/profile", label: "Profile", icon: HiOutlineUser },
       ],
     };
 

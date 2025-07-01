@@ -6,6 +6,7 @@ interface AppContextType {
   currentUser: User | null;
   reviews: Review[];
   setCurrentUser: (user: User | null) => void;
+  updateUser: (user: User) => void;
   addReview: (review: Omit<Review, "id" | "createdAt">) => void;
   updateReviewStatus: (
     reviewId: string,
@@ -47,6 +48,12 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     } else {
       localStorage.removeItem("userType");
     }
+  };
+
+  const updateUser = (updatedUser: User) => {
+    setCurrentUserState(updatedUser);
+    // In a real app, this would also update the backend
+    // For demo purposes, we just update the local state
   };
 
   const addReview = (review: Omit<Review, "id" | "createdAt">) => {
@@ -118,6 +125,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         currentUser,
         reviews,
         setCurrentUser,
+        updateUser,
         addReview,
         updateReviewStatus,
         addReviewCredits,

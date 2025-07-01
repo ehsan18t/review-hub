@@ -7,6 +7,8 @@ export interface User {
   role: "student" | "faculty" | "admin";
   avatar?: string;
   department?: string;
+  position?: string;
+  bio?: string;
   reviewCredits: number;
 }
 
@@ -43,6 +45,7 @@ export interface AIInsight {
   title: string;
   description: string;
   confidence: number;
+  basedOnReviews: number;
 }
 
 // Mock users
@@ -61,6 +64,8 @@ export const mockUsers: User[] = [
     email: "sarah.johnson@university.edu",
     role: "faculty",
     department: "Computer Science",
+    position: "Associate Professor",
+    bio: "Specializes in Machine Learning and Data Science with 10+ years of teaching experience.",
     reviewCredits: 0,
   },
   {
@@ -68,6 +73,9 @@ export const mockUsers: User[] = [
     name: "Admin User",
     email: "admin@university.edu",
     role: "admin",
+    department: "Administration",
+    position: "System Administrator",
+    bio: "Responsible for managing the faculty review system and ensuring smooth operations.",
     reviewCredits: 0,
   },
   {
@@ -76,7 +84,7 @@ export const mockUsers: User[] = [
     email: "emily.davis@university.edu",
     role: "student",
     department: "Mathematics",
-    reviewCredits: 3,
+    reviewCredits: 5,
   },
 ];
 
@@ -202,6 +210,7 @@ export const mockAIInsights: AIInsight[] = [
     description:
       "Students consistently praise availability during office hours and individual help.",
     confidence: 0.92,
+    basedOnReviews: 15,
   },
   {
     id: "ai2",
@@ -211,6 +220,7 @@ export const mockAIInsights: AIInsight[] = [
     description:
       "Some students find lecture pace too slow. Consider adjusting for different learning speeds.",
     confidence: 0.78,
+    basedOnReviews: 8,
   },
   {
     id: "ai3",
@@ -220,6 +230,7 @@ export const mockAIInsights: AIInsight[] = [
     description:
       "Course organization and structure consistently rated highly by students.",
     confidence: 0.95,
+    basedOnReviews: 20,
   },
   {
     id: "ai4",
@@ -229,6 +240,7 @@ export const mockAIInsights: AIInsight[] = [
     description:
       "Student ratings have improved by 15% over the past two semesters.",
     confidence: 0.88,
+    basedOnReviews: 12,
   },
 ];
 
