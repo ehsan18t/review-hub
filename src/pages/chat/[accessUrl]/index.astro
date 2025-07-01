@@ -1,0 +1,10 @@
+---
+import StudentChatView from "@/components/StudentChatView.tsx";
+import MainLayout from "@/layouts/MainLayout.astro";
+export const prerender = false;
+const { accessUrl } = Astro.params;
+---
+
+<MainLayout>
+  <StudentChatView accessUrl={accessUrl ?? ""} client:load />
+</MainLayout>

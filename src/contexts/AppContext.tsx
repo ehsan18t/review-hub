@@ -1,11 +1,26 @@
-import type { Dispute, Review, User } from "@/data/mockData";
-import { mockDisputes, mockReviews, mockUsers } from "@/data/mockData";
+import type {
+  ContinuousReviewChat,
+  ContinuousReviewMessage,
+  Dispute,
+  Review,
+  User,
+} from "@/data/mockData";
+import {
+  generateCrypticUrl,
+  mockContinuousReviewChats,
+  mockContinuousReviewMessages,
+  mockDisputes,
+  mockReviews,
+  mockUsers,
+} from "@/data/mockData";
 import React, { createContext, useContext, useEffect, useState } from "react";
 
 interface AppContextType {
   currentUser: User | null;
   reviews: Review[];
   disputes: Dispute[];
+  continuousReviewChats: ContinuousReviewChat[];
+  continuousReviewMessages: ContinuousReviewMessage[];
   setCurrentUser: (user: User | null) => void;
   updateUser: (user: User) => void;
   addReview: (review: Omit<Review, "id" | "createdAt">) => void;
@@ -25,6 +40,23 @@ interface AppContextType {
     approved: boolean,
     adminNotes: string,
   ) => void;
+  createContinuousReviewChat: (
+    chat: Omit<
+      ContinuousReviewChat,
+      "id" | "createdAt" | "accessUrl" | "isActive" | "blockedStudents"
+    >,
+  ) => ContinuousReviewChat;
+  updateContinuousReviewChat: (
+    chatId: string,
+    updates: Partial<ContinuousReviewChat>,
+  ) => void;
+  endContinuousReviewChat: (chatId: string) => void;
+  blockStudentFromChat: (chatId: string, studentId: string) => void;
+  unblockStudentFromChat: (chatId: string, studentId: string) => void;
+  generateNewChatUrl: (chatId: string) => string;
+  addMessageToChat: (
+    message: Omit<ContinuousReviewMessage, "id" | "createdAt" | "isBlocked">,
+  ) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -33,6 +65,12 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [currentUser, setCurrentUserState] = useState<User | null>(null);
   const [reviews, setReviews] = useState<Review[]>(mockReviews);
   const [disputes, setDisputes] = useState<Dispute[]>(mockDisputes);
+  const [continuousReviewChats, setContinuousReviewChats] = useState<
+    ContinuousReviewChat[]
+  >(mockContinuousReviewChats);
+  const [continuousReviewMessages, setContinuousReviewMessages] = useState<
+    ContinuousReviewMessage[]
+  >(mockContinuousReviewMessages);
 
   // Initialize user from localStorage
   useEffect(() => {
@@ -197,12 +235,107 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  // Continuous Review Functions
+  const createContinuousReviewChat = (
+    chat: Omit<
+      ContinuousReviewChat,
+      "id" | "createdAt" | "accessUrl" | "isActive" | "blockedStudents"
+    >,
+  ): ContinuousReviewChat => {
+    const newChat: ContinuousReviewChat = {
+      ...chat,
+      id: `cr${Date.now()}`,
+      createdAt: new Date(),
+      accessUrl: generateCrypticUrl(),
+      isActive: true,
+      blockedStudents: [],
+    };
+    setContinuousReviewChats((prev) => [...prev, newChat]);
+    return newChat;
+  };
+
+  const updateContinuousReviewChat = (
+    chatId: string,
+    updates: Partial<ContinuousReviewChat>,
+  ) => {
+    setContinuousReviewChats((prev) =>
+      prev.map((chat) => (chat.id === chatId ? { ...chat, ...updates } : chat)),
+    );
+  };
+
+  const endContinuousReviewChat = (chatId: string) => {
+    setContinuousReviewChats((prev) =>
+      prev.map((chat) =>
+        chat.id === chatId
+          ? { ...chat, isActive: false, endedAt: new Date() }
+          : chat,
+      ),
+    );
+  };
+
+  const blockStudentFromChat = (chatId: string, studentId: string) => {
+    setContinuousReviewChats((prev) =>
+      prev.map((chat) =>
+        chat.id === chatId
+          ? {
+              ...chat,
+              blockedStudents: [...chat.blockedStudents, studentId],
+            }
+          : chat,
+      ),
+    );
+  };
+
+  const unblockStudentFromChat = (chatId: string, studentId: string) => {
+    setContinuousReviewChats((prev) =>
+      prev.map((chat) =>
+        chat.id === chatId
+          ? {
+              ...chat,
+              blockedStudents: chat.blockedStudents.filter(
+                (id) => id !== studentId,
+              ),
+            }
+          : chat,
+      ),
+    );
+  };
+
+  const generateNewChatUrl = (chatId: string): string => {
+    const newUrl = generateCrypticUrl();
+    setContinuousReviewChats((prev) =>
+      prev.map((chat) =>
+        chat.id === chatId ? { ...chat, accessUrl: newUrl } : chat,
+      ),
+    );
+    return newUrl;
+  };
+
+  const addMessageToChat = (
+    message: Omit<ContinuousReviewMessage, "id" | "createdAt" | "isBlocked">,
+  ) => {
+    const chat = continuousReviewChats.find((c) => c.id === message.chatId);
+    const isBlocked =
+      chat?.blockedStudents.includes(message.studentId) || false;
+
+    const newMessage: ContinuousReviewMessage = {
+      ...message,
+      id: `crm${Date.now()}`,
+      createdAt: new Date(),
+      isBlocked,
+    };
+
+    setContinuousReviewMessages((prev) => [...prev, newMessage]);
+  };
+
   return (
     <AppContext.Provider
       value={{
         currentUser,
         reviews,
         disputes,
+        continuousReviewChats,
+        continuousReviewMessages,
         setCurrentUser,
         updateUser,
         addReview,
@@ -213,6 +346,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         createDispute,
         updateDispute,
         resolveDispute,
+        createContinuousReviewChat,
+        updateContinuousReviewChat,
+        endContinuousReviewChat,
+        blockStudentFromChat,
+        unblockStudentFromChat,
+        generateNewChatUrl,
+        addMessageToChat,
       }}
     >
       {children}

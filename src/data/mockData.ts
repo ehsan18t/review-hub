@@ -96,6 +96,32 @@ export interface DetailedAIInsight {
   confidence: number;
 }
 
+// New interfaces for Continuous Review feature
+export interface ContinuousReviewChat {
+  id: string;
+  facultyId: string;
+  title: string;
+  description: string;
+  courseCode: string;
+  semester: string;
+  year: number;
+  isActive: boolean;
+  accessUrl: string; // Cryptic URL for access
+  createdAt: Date;
+  endedAt?: Date;
+  blockedStudents: string[]; // Array of student IDs
+  maxParticipants?: number;
+}
+
+export interface ContinuousReviewMessage {
+  id: string;
+  chatId: string;
+  studentId: string;
+  message: string;
+  createdAt: Date;
+  isBlocked: boolean; // If message was sent by a blocked user
+}
+
 // Mock users (keeping existing data)
 export const mockUsers: User[] = [
   {
@@ -133,6 +159,22 @@ export const mockUsers: User[] = [
     role: "student",
     department: "Mathematics",
     reviewCredits: 5,
+  },
+  {
+    id: "4",
+    name: "Alex Thompson",
+    email: "alex.thompson@university.edu",
+    role: "student",
+    department: "Computer Science",
+    reviewCredits: 2,
+  },
+  {
+    id: "5",
+    name: "Sarah Wilson",
+    email: "sarah.wilson@university.edu",
+    role: "student",
+    department: "Computer Science",
+    reviewCredits: 4,
   },
 ];
 
@@ -187,6 +229,87 @@ export const mockFaculty: Faculty[] = [
     bio: "Organic Chemistry specialist with focus on sustainable synthesis.",
     avgRating: 4.1,
     totalReviews: 22,
+  },
+];
+
+// Mock continuous review chats
+export const mockContinuousReviewChats: ContinuousReviewChat[] = [
+  {
+    id: "cr1",
+    facultyId: "f1",
+    title: "CS 101 - Mid-Semester Feedback",
+    description:
+      "Share your thoughts on the course progress, assignments, and teaching methods.",
+    courseCode: "CS 101",
+    semester: "Fall",
+    year: 2024,
+    isActive: true,
+    accessUrl: "7f9a8b2c4e6d1a3b5c7e9f0d2a4b6c8e",
+    createdAt: new Date("2024-11-01"),
+    blockedStudents: [],
+    maxParticipants: 50,
+  },
+  {
+    id: "cr2",
+    facultyId: "f1",
+    title: "CS 201 - Assignment Feedback Session",
+    description:
+      "Let me know how you're finding the current assignments and any suggestions for improvement.",
+    courseCode: "CS 201",
+    semester: "Fall",
+    year: 2024,
+    isActive: false,
+    accessUrl: "9e8d7c6b5a4f3e2d1c0b9a8f7e6d5c4b",
+    createdAt: new Date("2024-10-15"),
+    endedAt: new Date("2024-10-22"),
+    blockedStudents: ["4"],
+    maxParticipants: 30,
+  },
+  {
+    id: "cr3",
+    facultyId: "f2",
+    title: "CS 301 - Final Project Discussion",
+    description:
+      "Anonymous feedback on the final project requirements and timeline.",
+    courseCode: "CS 301",
+    semester: "Fall",
+    year: 2024,
+    isActive: true,
+    accessUrl: "3b2a1f0e9d8c7b6a5f4e3d2c1b0a9f8e",
+    createdAt: new Date("2024-11-10"),
+    blockedStudents: [],
+    maxParticipants: 25,
+  },
+];
+
+// Mock continuous review messages
+export const mockContinuousReviewMessages: ContinuousReviewMessage[] = [
+  {
+    id: "crm1",
+    chatId: "cr1",
+    studentId: "1",
+    message:
+      "The assignments are quite challenging but very helpful for understanding the concepts.",
+    createdAt: new Date("2024-11-05T10:30:00"),
+    isBlocked: false,
+  },
+  {
+    id: "crm2",
+    chatId: "cr1",
+    studentId: "2",
+    message:
+      "Could we have more examples during lectures? Sometimes the pace feels a bit fast.",
+    createdAt: new Date("2024-11-05T11:15:00"),
+    isBlocked: false,
+  },
+  {
+    id: "crm3",
+    chatId: "cr1",
+    studentId: "4",
+    message:
+      "The online resources are great! Really appreciate the detailed explanations.",
+    createdAt: new Date("2024-11-06T09:20:00"),
+    isBlocked: false,
   },
 ];
 
@@ -331,7 +454,7 @@ export const mockAIInsights: AIInsight[] = [
   },
 ];
 
-// Enhanced AI Insights with detailed teaching recommendations
+// Enhanced AI Insights with detailed teaching recommendations (keeping existing data - truncated for brevity)
 export const mockDetailedAIInsights: DetailedAIInsight[] = [
   // Actionable insights for Dr. Sarah Johnson (f1)
   {
@@ -707,3 +830,36 @@ export const getDetailedInsightsByType = (
   mockDetailedAIInsights.filter(
     (insight) => insight.facultyId === facultyId && insight.type === type,
   );
+
+// New helper functions for Continuous Review
+export const getContinuousReviewChatsByFacultyId = (facultyId: string) =>
+  mockContinuousReviewChats.filter((chat) => chat.facultyId === facultyId);
+
+export const getContinuousReviewChatByUrl = (accessUrl: string) =>
+  mockContinuousReviewChats.find((chat) => chat.accessUrl === accessUrl);
+
+export const getContinuousReviewChatById = (chatId: string) =>
+  mockContinuousReviewChats.find((chat) => chat.id === chatId);
+
+export const getMessagesByChatId = (chatId: string) =>
+  mockContinuousReviewMessages.filter((message) => message.chatId === chatId);
+
+// Utility function to generate cryptic URL
+export const generateCrypticUrl = (): string => {
+  return Math.random().toString(36).substr(2, 32);
+};
+
+// Utility function to group messages by date
+export const groupMessagesByDate = (messages: ContinuousReviewMessage[]) => {
+  const grouped: { [date: string]: ContinuousReviewMessage[] } = {};
+
+  messages.forEach((message) => {
+    const dateKey = message.createdAt.toDateString();
+    if (!grouped[dateKey]) {
+      grouped[dateKey] = [];
+    }
+    grouped[dateKey].push(message);
+  });
+
+  return grouped;
+};

@@ -1,0 +1,10 @@
+---
+import ChatManagement from "@/components/ChatManagement.tsx";
+import MainLayout from "@/layouts/MainLayout.astro";
+export const prerender = false;
+const { accessUrl } = Astro.params;
+---
+
+<MainLayout>
+  <ChatManagement accessUrl={accessUrl ?? ""} client:load />
+</MainLayout>
