@@ -3,6 +3,7 @@ import { mockFaculty, mockReviews } from "@/data/mockData";
 import React, { useState } from "react";
 import {
   HiOutlineAcademicCap,
+  HiOutlineCamera,
   HiOutlineChartBar,
   HiOutlineCheck,
   HiOutlineDocumentText,
@@ -28,7 +29,9 @@ const ProfileContent: React.FC = () => {
     department: "",
     position: "",
     bio: "",
+    avatar: "",
   });
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
 
   if (!currentUser) return null;
 
@@ -40,18 +43,22 @@ const ProfileContent: React.FC = () => {
       department: currentUser.department || "",
       position: currentUser.position || "",
       bio: currentUser.bio || "",
+      avatar: currentUser.avatar || "",
     });
+    setAvatarPreview(currentUser.avatar || null);
     setIsEditing(true);
   };
 
   const cancelEditing = () => {
     setIsEditing(false);
+    setAvatarPreview(null);
     setEditForm({
       name: "",
       email: "",
       department: "",
       position: "",
       bio: "",
+      avatar: "",
     });
   };
 
@@ -63,8 +70,10 @@ const ProfileContent: React.FC = () => {
       department: editForm.department,
       position: editForm.position,
       bio: editForm.bio,
+      avatar: editForm.avatar,
     });
     setIsEditing(false);
+    setAvatarPreview(null);
   };
 
   const handleInputChange = (
@@ -72,6 +81,44 @@ const ProfileContent: React.FC = () => {
   ) => {
     const { name, value } = e.target;
     setEditForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // In a real app, you would upload this to a server
+      // For demo purposes, we'll use FileReader to create a preview
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const result = event.target?.result as string;
+        setAvatarPreview(result);
+        setEditForm((prev) => ({ ...prev, avatar: result }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removeAvatar = () => {
+    setAvatarPreview(null);
+    setEditForm((prev) => ({ ...prev, avatar: "" }));
+  };
+
+  const getAvatarDisplay = () => {
+    if (isEditing && avatarPreview) {
+      return avatarPreview;
+    }
+    if (!isEditing && currentUser.avatar) {
+      return currentUser.avatar;
+    }
+    return null;
+  };
+
+  const getInitials = () => {
+    return currentUser.name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .slice(0, 2);
   };
 
   // Get user-specific data
@@ -231,20 +278,45 @@ const ProfileContent: React.FC = () => {
       <div className="mb-8 rounded-xl border border-slate-200 bg-white p-8 shadow-sm">
         <div className="flex items-start justify-between">
           <div className="flex items-center space-x-6">
-            <div className="flex h-24 w-24 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 text-3xl font-bold text-white shadow-lg">
-              {currentUser.name
-                .split(" ")
-                .map((n) => n[0])
-                .join("")
-                .slice(0, 2)}
+            {/* Profile Picture */}
+            <div className="relative">
+              {getAvatarDisplay() ? (
+                <img
+                  src={getAvatarDisplay()!}
+                  alt={currentUser.name}
+                  className="h-24 w-24 rounded-xl object-cover shadow-lg"
+                />
+              ) : (
+                <div className="flex h-24 w-24 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 text-3xl font-bold text-white shadow-lg">
+                  {getInitials()}
+                </div>
+              )}
+
+              {/* Edit Avatar Overlay */}
+              {isEditing && canEdit && (
+                <div className="bg-opacity-50 absolute inset-0 flex items-center justify-center rounded-xl bg-black opacity-0 transition-opacity hover:opacity-100">
+                  <label className="cursor-pointer">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleAvatarChange}
+                      className="hidden"
+                    />
+                    <HiOutlineCamera className="h-6 w-6 text-white" />
+                  </label>
+                </div>
+              )}
             </div>
+
             <div className="flex-1">
               <div className="mb-2 flex items-center space-x-3">
                 <h1 className="text-3xl font-bold text-slate-900">
                   {currentUser.name}
                 </h1>
                 <div
-                  className={`inline-flex items-center space-x-1.5 rounded-full border bg-slate-100 px-3 py-1.5 text-sm font-semibold ${getRoleColor(currentUser.role)}`}
+                  className={`inline-flex items-center space-x-1.5 rounded-full border bg-slate-100 px-3 py-1.5 text-sm font-semibold ${getRoleColor(
+                    currentUser.role,
+                  )}`}
                 >
                   <span>{getRoleIcon(currentUser.role)}</span>
                   <span className="capitalize">{currentUser.role}</span>
@@ -369,6 +441,53 @@ const ProfileContent: React.FC = () => {
 
             {isEditing ? (
               <div className="space-y-6">
+                {/* Profile Picture Upload Section */}
+                <div className="rounded-lg border border-slate-200 bg-slate-50 p-6">
+                  <h3 className="mb-4 text-lg font-semibold text-slate-900">
+                    Profile Picture
+                  </h3>
+                  <div className="flex items-center space-x-6">
+                    <div className="relative">
+                      {avatarPreview ? (
+                        <img
+                          src={avatarPreview}
+                          alt="Avatar preview"
+                          className="h-20 w-20 rounded-xl object-cover shadow-md"
+                        />
+                      ) : (
+                        <div className="flex h-20 w-20 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 text-2xl font-bold text-white shadow-md">
+                          {getInitials()}
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex-1 space-y-3">
+                      <div className="flex items-center space-x-3">
+                        <label className="cursor-pointer rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-all duration-200 hover:bg-blue-700">
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleAvatarChange}
+                            className="hidden"
+                          />
+                          📸 Upload Picture
+                        </label>
+                        {avatarPreview && (
+                          <button
+                            onClick={removeAvatar}
+                            className="rounded-lg border border-red-300 bg-white px-4 py-2 text-sm font-semibold text-red-600 transition-all duration-200 hover:bg-red-50"
+                          >
+                            🗑️ Remove
+                          </button>
+                        )}
+                      </div>
+                      <p className="text-sm text-slate-600">
+                        Upload a square image for best results. JPG, PNG, or GIF
+                        (max 5MB)
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
                 <div className="grid gap-6 md:grid-cols-2">
                   <div>
                     <label className="mb-2 block text-sm font-semibold text-slate-700">
