@@ -142,7 +142,7 @@ const HomePageContent: React.FC = () => {
     <div className="mx-auto max-w-7xl px-4 py-8">
       {/* Header */}
       <div className="mb-8">
-        <div className="rounded-2xl border border-blue-200 bg-blue-50 p-8 transition-all duration-300 hover:shadow-lg">
+        <div className="rounded-2xl border border-blue-200 bg-blue-50 p-8 transition-all duration-300">
           <h1 className="mb-3 text-4xl font-bold text-slate-900">
             Welcome back, {currentUser.name}! 👋
           </h1>
@@ -158,7 +158,7 @@ const HomePageContent: React.FC = () => {
 
       {/* Search Bar */}
       <div className="mb-8">
-        <div className="max-w-lg">
+        <div className="max-w-full">
           <label
             htmlFor="search"
             className="mb-3 block text-sm font-bold text-slate-700"
