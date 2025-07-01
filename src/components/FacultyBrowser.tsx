@@ -48,11 +48,6 @@ const FacultyBrowserContent: React.FC = () => {
     window.location.href = `/reviews/${faculty.id}`;
   };
 
-  const handleCloseModal = () => {
-    setShowReviewModal(false);
-    setSelectedFaculty(null);
-  };
-
   return (
     <>
       <div className="mx-auto max-w-7xl px-4 py-8">
@@ -171,7 +166,11 @@ const FacultyBrowserContent: React.FC = () => {
 
       {/* Review Modal */}
       {showReviewModal && selectedFaculty && (
-        <ReviewModal faculty={selectedFaculty} onClose={handleCloseModal} />
+        <ReviewModal
+          faculty={selectedFaculty}
+          isOpen={showReviewModal}
+          onClose={() => setShowReviewModal(false)}
+        />
       )}
     </>
   );
