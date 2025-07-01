@@ -8,7 +8,6 @@ import {
   HiOutlineMenu,
   HiOutlineSearch,
   HiOutlineUser,
-  HiOutlineUserGroup,
   HiOutlineViewGrid,
   HiOutlineX,
 } from "react-icons/hi";
@@ -79,11 +78,6 @@ const Navigation: React.FC = () => {
           href: "/admin/disputes",
           label: "Manage Disputes",
           icon: HiOutlineDocumentText,
-        },
-        {
-          href: "/manage-users",
-          label: "Manage Users",
-          icon: HiOutlineUserGroup,
         },
         { href: "/profile", label: "Profile", icon: HiOutlineUser },
       ],
