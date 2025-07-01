@@ -19,13 +19,31 @@ interface AppContextType {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [currentUser, setCurrentUserState] = useState<User | null>(null);
   const [reviews, setReviews] = useState<Review[]>(mockReviews);
 
-  // Initialize with first user for demo
+  // Initialize user from localStorage
   useEffect(() => {
-    setCurrentUser(mockUsers[0]);
+    const savedUserType = localStorage.getItem('userType') as 'student' | 'faculty' | 'admin' | null;
+    if (savedUserType) {
+      const user = mockUsers.find((u) => u.role === savedUserType);
+      if (user) {
+        setCurrentUserState(user);
+      }
+    } else {
+      // Default to student if no saved preference
+      setCurrentUserState(mockUsers[0]);
+    }
   }, []);
+
+  const setCurrentUser = (user: User | null) => {
+    setCurrentUserState(user);
+    if (user) {
+      localStorage.setItem('userType', user.role);
+    } else {
+      localStorage.removeItem('userType');
+    }
+  };
 
   const addReview = (review: Omit<Review, "id" | "createdAt">) => {
     const newReview: Review = {
@@ -54,10 +72,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const addReviewCredits = (userId: string, amount: number) => {
     if (currentUser && currentUser.id === userId) {
-      setCurrentUser({
+      const updatedUser = {
         ...currentUser,
         reviewCredits: currentUser.reviewCredits + amount,
-      });
+      };
+      setCurrentUserState(updatedUser);
     }
   };
 
@@ -67,10 +86,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       currentUser.id === userId &&
       currentUser.reviewCredits >= amount
     ) {
-      setCurrentUser({
+      const updatedUser = {
         ...currentUser,
         reviewCredits: currentUser.reviewCredits - amount,
-      });
+      };
+      setCurrentUserState(updatedUser);
       return true;
     }
     return false;
@@ -78,10 +98,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const spendReviewCredit = (): boolean => {
     if (currentUser && currentUser.reviewCredits >= 1) {
-      setCurrentUser({
+      const updatedUser = {
         ...currentUser,
         reviewCredits: currentUser.reviewCredits - 1,
-      });
+      };
+      setCurrentUserState(updatedUser);
       return true;
     }
     return false;

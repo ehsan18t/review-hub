@@ -16,6 +16,13 @@ const Navigation: React.FC = () => {
     }
   };
 
+  const handleGetStarted = () => {
+    const user = mockUsers.find((u) => u.role === "student");
+    if (user) {
+      setCurrentUser(user);
+    }
+  };
+
   return (
     <>
       <nav className="border-b border-gray-200 bg-white shadow-sm">
@@ -166,7 +173,7 @@ const Navigation: React.FC = () => {
 
               {!currentUser && (
                 <button
-                  onClick={() => setCurrentUser(mockUsers[0])}
+                  onClick={handleGetStarted}
                   className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700"
                 >
                   Get Started

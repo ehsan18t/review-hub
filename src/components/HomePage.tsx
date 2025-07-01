@@ -1,13 +1,13 @@
 import { AppProvider, useApp } from "@/contexts/AppContext";
 import type { Faculty } from "@/data/mockData";
-import { mockFaculty } from "@/data/mockData";
+import { mockFaculty, mockUsers } from "@/data/mockData";
 import React, { useState } from "react";
 import FacultyCard from "./FacultyCard";
 import Navigation from "./Navigation";
 import ReviewForm from "./ReviewForm";
 
 const HomePageContent: React.FC = () => {
-  const { currentUser } = useApp();
+  const { currentUser, setCurrentUser } = useApp();
   const [selectedFaculty, setSelectedFaculty] = useState<Faculty | null>(null);
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -30,6 +30,13 @@ const HomePageContent: React.FC = () => {
   const handleCloseModal = () => {
     setShowReviewForm(false);
     setSelectedFaculty(null);
+  };
+
+  const handleGetStarted = (role: 'student' | 'faculty') => {
+    const user = mockUsers.find((u) => u.role === role);
+    if (user) {
+      setCurrentUser(user);
+    }
   };
 
   if (showReviewForm && selectedFaculty) {
@@ -65,13 +72,13 @@ const HomePageContent: React.FC = () => {
 
             <div className="mb-16 flex flex-col items-center justify-center gap-4 sm:flex-row">
               <button
-                onClick={() => (window.location.href = "/student")}
+                onClick={() => handleGetStarted('student')}
                 className="rounded-lg bg-blue-600 px-8 py-4 text-lg font-semibold text-white shadow-lg transition-colors hover:bg-blue-700"
               >
                 Get Started as Student
               </button>
               <button
-                onClick={() => (window.location.href = "/faculty")}
+                onClick={() => handleGetStarted('faculty')}
                 className="rounded-lg bg-green-600 px-8 py-4 text-lg font-semibold text-white shadow-lg transition-colors hover:bg-green-700"
               >
                 Get Started as Faculty
