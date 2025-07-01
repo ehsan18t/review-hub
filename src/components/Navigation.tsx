@@ -63,11 +63,6 @@ const Navigation: React.FC = () => {
           label: "Dashboard",
           icon: HiOutlineViewGrid,
         },
-        {
-          href: "/my-reviews",
-          label: "My Reviews",
-          icon: HiOutlineDocumentText,
-        },
         { href: "/profile", label: "Profile", icon: HiOutlineUser },
       ],
       admin: [
