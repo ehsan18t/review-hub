@@ -1,5 +1,6 @@
+import { useApp } from "@/contexts/AppContext";
 import type { Faculty, Review } from "@/data/mockData";
-import { getFacultyById } from "@/data/mockData";
+import { getDisputeByReviewId, getFacultyById } from "@/data/mockData";
 import React from "react";
 import {
   HiOutlineAcademicCap,
@@ -12,25 +13,32 @@ import {
   HiOutlineX,
   HiStar,
 } from "react-icons/hi";
+import { HiOutlineExclamationTriangle } from "react-icons/hi2";
 
 interface ReviewCardProps {
   review: Review;
   faculty?: Faculty;
   showActions?: boolean;
+  showDisputeActions?: boolean;
   onApprove?: (reviewId: string) => void;
   onReject?: (reviewId: string) => void;
   onViewFull?: () => void;
+  onDispute?: (reviewId: string) => void;
 }
 
 const ReviewCard: React.FC<ReviewCardProps> = ({
   review,
   faculty,
   showActions = false,
+  showDisputeActions = false,
   onApprove,
   onReject,
   onViewFull,
+  onDispute,
 }) => {
+  const { currentUser } = useApp();
   const facultyInfo = faculty || getFacultyById(review.facultyId);
+  const dispute = getDisputeByReviewId(review.id);
 
   const renderStars = (rating: number) => {
     return (
@@ -52,17 +60,17 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
     const statusConfig = {
       pending: {
         color: "bg-amber-50 text-amber-700 border-amber-200",
-        text: "Pending Review",
+        text: "⏳ Pending Review",
         icon: HiOutlineClock,
       },
       approved: {
         color: "bg-emerald-50 text-emerald-700 border-emerald-200",
-        text: "Approved",
+        text: "✅ Approved",
         icon: HiOutlineCheck,
       },
       rejected: {
         color: "bg-red-50 text-red-700 border-red-200",
-        text: "Rejected",
+        text: "❌ Rejected",
         icon: HiOutlineX,
       },
     };
@@ -75,6 +83,36 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
         className={`inline-flex items-center space-x-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold ${config.color}`}
       >
         <IconComponent className="h-3 w-3" />
+        <span>{config.text}</span>
+      </div>
+    );
+  };
+
+  const getDisputeBadge = () => {
+    if (!dispute) return null;
+
+    const disputeConfig = {
+      pending: {
+        color: "bg-orange-50 text-orange-700 border-orange-200",
+        text: "🔍 Under Dispute",
+      },
+      approved: {
+        color: "bg-red-50 text-red-700 border-red-200",
+        text: "⚠️ Dispute Upheld",
+      },
+      rejected: {
+        color: "bg-emerald-50 text-emerald-700 border-emerald-200",
+        text: "✅ Dispute Rejected",
+      },
+    };
+
+    const config = disputeConfig[dispute.status];
+
+    return (
+      <div
+        className={`inline-flex items-center space-x-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold ${config.color}`}
+      >
+        <HiOutlineExclamationTriangle className="h-3 w-3" />
         <span>{config.text}</span>
       </div>
     );
@@ -146,37 +184,84 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
           </div>
         </div>
 
-        {/* Status Badge */}
-        <div className="flex-shrink-0">{getStatusBadge(review.status)}</div>
+        {/* Status Badges */}
+        <div className="flex-shrink-0 space-y-2">
+          {getStatusBadge(review.status)}
+          {getDisputeBadge()}
+        </div>
       </div>
 
       {/* Review Content */}
       <div className="mb-5">
-        <div className="rounded-lg border border-slate-100 bg-slate-50 p-4">
+        <div
+          className={`rounded-lg border p-4 ${
+            dispute && dispute.status === "approved"
+              ? "border-red-200 bg-red-50"
+              : "border-slate-100 bg-slate-50"
+          }`}
+        >
           <p className="text-sm leading-relaxed text-slate-700">
             {review.comment.length > 200 && !onViewFull
               ? `${review.comment.slice(0, 200)}...`
               : review.comment}
           </p>
+          {dispute && dispute.status === "approved" && (
+            <div className="mt-3 rounded-md border border-red-200 bg-red-100 p-3">
+              <p className="text-xs font-medium text-red-700">
+                ⚠️ This review has been disputed and marked for removal by
+                administration.
+              </p>
+            </div>
+          )}
         </div>
       </div>
 
       {/* Actions */}
       <div className="flex items-center justify-between">
-        {/* View Full Button */}
-        {onViewFull && (
-          <button
-            onClick={onViewFull}
-            className="inline-flex items-center space-x-1.5 rounded-lg px-2 py-1 text-sm font-medium text-blue-600 transition-colors duration-200 hover:text-blue-800 focus:ring-2 focus:ring-blue-200 focus:outline-none"
-          >
-            <HiOutlineEye className="h-4 w-4" />
-            <span>View Full Review</span>
-          </button>
-        )}
+        <div className="flex items-center space-x-3">
+          {/* View Full Button */}
+          {onViewFull && (
+            <button
+              onClick={onViewFull}
+              className="inline-flex items-center space-x-1.5 rounded-lg px-2 py-1 text-sm font-medium text-blue-600 transition-colors duration-200 hover:text-blue-800 focus:ring-2 focus:ring-blue-200 focus:outline-none"
+            >
+              <HiOutlineEye className="h-4 w-4" />
+              <span>View Full</span>
+            </button>
+          )}
+
+          {/* Dispute Actions for Faculty */}
+          {showDisputeActions &&
+            currentUser?.role === "faculty" &&
+            currentUser.id === review.facultyId &&
+            review.status === "approved" &&
+            !dispute && (
+              <button
+                onClick={() => onDispute?.(review.id)}
+                className="inline-flex items-center space-x-1.5 rounded-lg border-2 border-orange-300 bg-white px-3 py-2 text-sm font-semibold text-orange-700 transition-all duration-200 hover:scale-105 hover:border-orange-400 hover:bg-orange-50 hover:shadow-sm focus:ring-2 focus:ring-orange-200 focus:outline-none"
+              >
+                <HiOutlineExclamationTriangle className="h-4 w-4" />
+                <span>Dispute</span>
+              </button>
+            )}
+
+          {/* Dispute Status for Students */}
+          {dispute &&
+            currentUser?.role === "student" &&
+            currentUser.id === review.studentId && (
+              <a
+                href={`/dispute/${dispute.id}`}
+                className="inline-flex items-center space-x-1.5 rounded-lg border-2 border-blue-300 bg-white px-3 py-2 text-sm font-semibold text-blue-700 transition-all duration-200 hover:scale-105 hover:border-blue-400 hover:bg-blue-50 hover:shadow-sm focus:ring-2 focus:ring-blue-200 focus:outline-none"
+              >
+                <HiOutlineEye className="h-4 w-4" />
+                <span>View Dispute</span>
+              </a>
+            )}
+        </div>
 
         {/* Admin Actions */}
         {showActions && review.status === "pending" && (
-          <div className="ml-auto flex items-center space-x-2">
+          <div className="flex items-center space-x-2">
             <button
               onClick={() => onReject?.(review.id)}
               className="inline-flex items-center space-x-1.5 rounded-lg border-2 border-red-300 bg-white px-4 py-2 text-sm font-semibold text-red-700 transition-all duration-200 hover:scale-105 hover:border-red-400 hover:bg-red-50 hover:shadow-sm focus:ring-2 focus:ring-red-200 focus:outline-none"
@@ -196,11 +281,11 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
 
         {/* Already Processed Status */}
         {showActions && review.status !== "pending" && (
-          <div className="ml-auto">
+          <div>
             <span className="text-xs text-slate-500">
               {review.status === "approved"
-                ? "Already approved"
-                : "Already rejected"}
+                ? "✅ Already approved"
+                : "❌ Already rejected"}
             </span>
           </div>
         )}

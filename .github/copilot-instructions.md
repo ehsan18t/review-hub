@@ -32,7 +32,7 @@ This is a Faculty Review System frontend built with React, Astro, and Tailwind C
 ## UI Guidelines
 
 - Follow university-friendly design with blue/gray color scheme
-- Use emoji icons for simplicity (🎓, 📝, 👀, 💰, etc.)
+- Use react-icons for icons
 - Maintain accessibility with proper ARIA labels and semantic HTML
 - Ensure responsive design for mobile, tablet, and desktop
 

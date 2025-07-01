@@ -1,10 +1,11 @@
-import type { Review, User } from "@/data/mockData";
-import { mockReviews, mockUsers } from "@/data/mockData";
+import type { Dispute, Review, User } from "@/data/mockData";
+import { mockDisputes, mockReviews, mockUsers } from "@/data/mockData";
 import React, { createContext, useContext, useEffect, useState } from "react";
 
 interface AppContextType {
   currentUser: User | null;
   reviews: Review[];
+  disputes: Dispute[];
   setCurrentUser: (user: User | null) => void;
   updateUser: (user: User) => void;
   addReview: (review: Omit<Review, "id" | "createdAt">) => void;
@@ -15,6 +16,15 @@ interface AppContextType {
   addReviewCredits: (userId: string, amount: number) => void;
   spendReviewCredits: (userId: string, amount: number) => boolean;
   spendReviewCredit: () => boolean;
+  createDispute: (
+    dispute: Omit<Dispute, "id" | "createdAt" | "updatedAt">,
+  ) => void;
+  updateDispute: (disputeId: string, updates: Partial<Dispute>) => void;
+  resolveDispute: (
+    disputeId: string,
+    approved: boolean,
+    adminNotes: string,
+  ) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -22,6 +32,7 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [currentUser, setCurrentUserState] = useState<User | null>(null);
   const [reviews, setReviews] = useState<Review[]>(mockReviews);
+  const [disputes, setDisputes] = useState<Dispute[]>(mockDisputes);
 
   // Initialize user from localStorage
   useEffect(() => {
@@ -119,11 +130,79 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     return false;
   };
 
+  const createDispute = (
+    dispute: Omit<Dispute, "id" | "createdAt" | "updatedAt">,
+  ) => {
+    const newDispute: Dispute = {
+      ...dispute,
+      id: `d${Date.now()}`,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    setDisputes((prev) => [...prev, newDispute]);
+
+    // Link the dispute to the review
+    setReviews((prev) =>
+      prev.map((review) =>
+        review.id === dispute.reviewId
+          ? { ...review, disputeId: newDispute.id }
+          : review,
+      ),
+    );
+  };
+
+  const updateDispute = (disputeId: string, updates: Partial<Dispute>) => {
+    setDisputes((prev) =>
+      prev.map((dispute) =>
+        dispute.id === disputeId
+          ? { ...dispute, ...updates, updatedAt: new Date() }
+          : dispute,
+      ),
+    );
+  };
+
+  const resolveDispute = (
+    disputeId: string,
+    approved: boolean,
+    adminNotes: string,
+  ) => {
+    const dispute = disputes.find((d) => d.id === disputeId);
+    if (!dispute) return;
+
+    // Update dispute status
+    setDisputes((prev) =>
+      prev.map((d) =>
+        d.id === disputeId
+          ? {
+              ...d,
+              status: approved ? "approved" : "rejected",
+              adminNotes,
+              resolvedAt: new Date(),
+              resolvedBy: currentUser?.id,
+              updatedAt: new Date(),
+            }
+          : d,
+      ),
+    );
+
+    // If dispute is approved, remove the review
+    if (approved) {
+      setReviews((prev) =>
+        prev.map((review) =>
+          review.id === dispute.reviewId
+            ? { ...review, status: "rejected" }
+            : review,
+        ),
+      );
+    }
+  };
+
   return (
     <AppContext.Provider
       value={{
         currentUser,
         reviews,
+        disputes,
         setCurrentUser,
         updateUser,
         addReview,
@@ -131,6 +210,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         addReviewCredits,
         spendReviewCredits,
         spendReviewCredit,
+        createDispute,
+        updateDispute,
+        resolveDispute,
       }}
     >
       {children}

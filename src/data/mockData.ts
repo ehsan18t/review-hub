@@ -36,6 +36,24 @@ export interface Review {
   status: "pending" | "approved" | "rejected";
   createdAt: Date;
   isAnonymous: boolean;
+  disputeId?: string; // Link to dispute if one exists
+}
+
+export interface Dispute {
+  id: string;
+  reviewId: string;
+  facultyId: string;
+  studentId: string;
+  status: "pending" | "approved" | "rejected";
+  facultyReason: string;
+  facultyEvidence?: string;
+  studentResponse?: string;
+  studentEvidence?: string;
+  adminNotes?: string;
+  createdAt: Date;
+  updatedAt: Date;
+  resolvedAt?: Date;
+  resolvedBy?: string; // Admin ID
 }
 
 export interface AIInsight {
@@ -48,10 +66,10 @@ export interface AIInsight {
   basedOnReviews: number;
 }
 
-// Mock users
+// Mock users (keeping existing data)
 export const mockUsers: User[] = [
   {
-    id: "1",
+    id: "f2",
     name: "John Smith",
     email: "john.smith@university.edu",
     role: "student",
@@ -59,7 +77,7 @@ export const mockUsers: User[] = [
     reviewCredits: 3,
   },
   {
-    id: "2",
+    id: "f1",
     name: "Dr. Sarah Johnson",
     email: "sarah.johnson@university.edu",
     role: "faculty",
@@ -69,7 +87,7 @@ export const mockUsers: User[] = [
     reviewCredits: 0,
   },
   {
-    id: "3",
+    id: "f3",
     name: "Admin User",
     email: "admin@university.edu",
     role: "admin",
@@ -79,7 +97,7 @@ export const mockUsers: User[] = [
     reviewCredits: 0,
   },
   {
-    id: "4",
+    id: "f4",
     name: "Emily Davis",
     email: "emily.davis@university.edu",
     role: "student",
@@ -88,7 +106,7 @@ export const mockUsers: User[] = [
   },
 ];
 
-// Mock faculty
+// Mock faculty (keeping existing data)
 export const mockFaculty: Faculty[] = [
   {
     id: "f1",
@@ -142,7 +160,7 @@ export const mockFaculty: Faculty[] = [
   },
 ];
 
-// Mock reviews
+// Mock reviews (keeping existing data)
 export const mockReviews: Review[] = [
   {
     id: "r1",
@@ -176,14 +194,16 @@ export const mockReviews: Review[] = [
     id: "r3",
     facultyId: "f1",
     studentId: "4",
-    rating: 3,
+    rating: 2,
     subject: "CS 201 - Data Structures",
-    comment: "Good content but lectures can be a bit slow-paced.",
+    comment:
+      "Professor was often unprepared and assignments were unclear. Very disappointing experience.",
     semester: "Spring",
     year: 2024,
     status: "approved",
     createdAt: new Date("2024-05-10"),
-    isAnonymous: true,
+    isAnonymous: false,
+    disputeId: "d1",
   },
   {
     id: "r4",
@@ -200,7 +220,44 @@ export const mockReviews: Review[] = [
   },
 ];
 
-// Mock AI insights
+// Mock disputes
+export const mockDisputes: Dispute[] = [
+  {
+    id: "d1",
+    reviewId: "r3",
+    facultyId: "f1",
+    studentId: "4",
+    status: "pending",
+    facultyReason:
+      "This review contains false information about my teaching preparation. I maintain detailed lesson plans and always prepare thoroughly for classes.",
+    facultyEvidence:
+      "I have attached my lesson plans and course materials that demonstrate my preparation level. The student may have missed classes where key concepts were covered.",
+    studentResponse:
+      "I attended all classes and can provide attendance records. The professor often seemed to struggle with explanations and had to look up answers during class.",
+    studentEvidence:
+      "I have screenshots of confusing assignment instructions and emails from classmates expressing similar concerns.",
+    createdAt: new Date("2024-11-15"),
+    updatedAt: new Date("2024-11-20"),
+  },
+  {
+    id: "d2",
+    reviewId: "r2",
+    facultyId: "f2",
+    studentId: "4",
+    status: "approved",
+    facultyReason: "This review misrepresents the course difficulty level.",
+    facultyEvidence:
+      "Course syllabus shows appropriate challenge level for the course number.",
+    adminNotes:
+      "After reviewing evidence, the faculty dispute is valid. The review will be taken down.",
+    createdAt: new Date("2024-10-01"),
+    updatedAt: new Date("2024-10-15"),
+    resolvedAt: new Date("2024-10-15"),
+    resolvedBy: "3",
+  },
+];
+
+// Mock AI insights (keeping existing data)
 export const mockAIInsights: AIInsight[] = [
   {
     id: "ai1",
@@ -257,3 +314,13 @@ export const getPendingReviews = () =>
   mockReviews.filter((r) => r.status === "pending");
 export const getAIInsightsByFacultyId = (facultyId: string) =>
   mockAIInsights.filter((ai) => ai.facultyId === facultyId);
+export const getDisputesByFacultyId = (facultyId: string) =>
+  mockDisputes.filter((d) => d.facultyId === facultyId);
+export const getDisputesByStudentId = (studentId: string) =>
+  mockDisputes.filter((d) => d.studentId === studentId);
+export const getPendingDisputes = () =>
+  mockDisputes.filter((d) => d.status === "pending");
+export const getDisputeByReviewId = (reviewId: string) =>
+  mockDisputes.find((d) => d.reviewId === reviewId);
+export const getDisputeById = (id: string) =>
+  mockDisputes.find((d) => d.id === id);

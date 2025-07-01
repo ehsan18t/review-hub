@@ -67,8 +67,8 @@ const Navigation: React.FC = () => {
       admin: [
         { href: "/admin", label: "Admin Panel", icon: HiOutlineViewGrid },
         {
-          href: "/manage-reviews",
-          label: "Manage Reviews",
+          href: "/admin/disputes",
+          label: "Manage Disputes",
           icon: HiOutlineDocumentText,
         },
         {

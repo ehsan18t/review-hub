@@ -1,5 +1,6 @@
 import { AppProvider, useApp } from "@/contexts/AppContext";
 import {
+  getDisputeByReviewId,
   mockFaculty,
   mockReviews,
   type Faculty,
@@ -16,6 +17,7 @@ import {
   HiOutlineUsers,
   HiOutlineXCircle,
 } from "react-icons/hi";
+import { HiOutlineExclamationTriangle } from "react-icons/hi2";
 import Navigation from "./Navigation";
 import ReviewCard from "./ReviewCard";
 
@@ -24,7 +26,7 @@ interface ReviewsPageProps {
 }
 
 const ReviewsPageContent: React.FC<{ faculty: Faculty }> = ({ faculty }) => {
-  const { currentUser, spendReviewCredit } = useApp();
+  const { currentUser, spendReviewCredit, createDispute } = useApp();
   const [hasAccess, setHasAccess] = useState(false);
   const [sortBy, setSortBy] = useState<"newest" | "oldest" | "rating">(
     "newest",
@@ -33,6 +35,10 @@ const ReviewsPageContent: React.FC<{ faculty: Faculty }> = ({ faculty }) => {
     "all" | "approved" | "pending" | "rejected"
   >("all");
   const [reviews, setReviews] = useState<Review[]>([]);
+  const [showDisputeModal, setShowDisputeModal] = useState(false);
+  const [selectedReviewId, setSelectedReviewId] = useState<string>("");
+  const [disputeReason, setDisputeReason] = useState("");
+  const [disputeEvidence, setDisputeEvidence] = useState("");
 
   // Initialize reviews from mock data
   useEffect(() => {
@@ -101,6 +107,33 @@ const ReviewsPageContent: React.FC<{ faculty: Faculty }> = ({ faculty }) => {
           : review,
       ),
     );
+  };
+
+  // Handle faculty dispute
+  const handleDispute = (reviewId: string) => {
+    setSelectedReviewId(reviewId);
+    setShowDisputeModal(true);
+  };
+
+  // Fixed createDispute call to match AppContext interface
+  const handleSubmitDispute = () => {
+    if (disputeReason.trim() && selectedReviewId && currentUser) {
+      const review = reviews.find((r) => r.id === selectedReviewId);
+      if (review) {
+        createDispute({
+          reviewId: selectedReviewId,
+          facultyId: currentUser.id,
+          studentId: review.studentId,
+          status: "pending",
+          facultyReason: disputeReason,
+          facultyEvidence: disputeEvidence,
+        });
+        setShowDisputeModal(false);
+        setDisputeReason("");
+        setDisputeEvidence("");
+        setSelectedReviewId("");
+      }
+    }
   };
 
   // Check if user should see access gate
@@ -181,6 +214,21 @@ const ReviewsPageContent: React.FC<{ faculty: Faculty }> = ({ faculty }) => {
   };
 
   const stats = getReviewStats();
+
+  // Check if current user can dispute reviews for this faculty
+  const canDisputeReviews = () => {
+    const result =
+      currentUser?.role === "faculty" && currentUser.id === faculty.id;
+    console.log("Checking dispute permissions:", {
+      currentUserId: currentUser?.id,
+      currentUserRole: currentUser?.role,
+      facultyId: faculty.id,
+      idsMatch: currentUser?.id === faculty.id,
+      roleMatch: currentUser?.role === "faculty",
+      canDispute: result,
+    });
+    return result;
+  };
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">
@@ -323,6 +371,20 @@ const ReviewsPageContent: React.FC<{ faculty: Faculty }> = ({ faculty }) => {
                 </div>
               </div>
             )}
+
+            {/* Faculty Info Banner - Show when faculty is viewing their own reviews */}
+            {canDisputeReviews() && !shouldShowAccessGate() && (
+              <div className="mt-4 rounded-lg border border-blue-200 bg-blue-50 p-4">
+                <div className="flex items-center space-x-2">
+                  <span className="text-blue-600">📝</span>
+                  <p className="text-sm font-medium text-blue-800">
+                    You're viewing your own reviews. You can dispute any
+                    approved reviews that you believe are inappropriate or
+                    incorrect.
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="flex-shrink-0">
@@ -436,7 +498,9 @@ const ReviewsPageContent: React.FC<{ faculty: Faculty }> = ({ faculty }) => {
                     ? `Showing approved reviews for ${faculty.name}`
                     : currentUser?.role === "admin"
                       ? `Managing all reviews for ${faculty.name}`
-                      : `Showing all reviews for ${faculty.name}`}
+                      : canDisputeReviews()
+                        ? `Showing all reviews for you. You can dispute approved reviews.`
+                        : `Showing all reviews for ${faculty.name}`}
                 </p>
               </div>
             </div>
@@ -466,8 +530,8 @@ const ReviewsPageContent: React.FC<{ faculty: Faculty }> = ({ faculty }) => {
                 </div>
               </div>
 
-              {/* Admin Filter Control */}
-              {currentUser?.role === "admin" && (
+              {/* Admin/Faculty Filter Control */}
+              {(currentUser?.role === "admin" || canDisputeReviews()) && (
                 <div className="flex items-center space-x-2">
                   <label
                     htmlFor="filter"
@@ -522,18 +586,107 @@ const ReviewsPageContent: React.FC<{ faculty: Faculty }> = ({ faculty }) => {
             </div>
           ) : (
             <div className="space-y-6">
-              {sortedReviews.map((review) => (
-                <ReviewCard
-                  key={review.id}
-                  review={review}
-                  faculty={faculty}
-                  showActions={currentUser?.role === "admin"}
-                  onApprove={handleApprove}
-                  onReject={handleReject}
-                />
-              ))}
+              {sortedReviews.map((review) => {
+                const existingDispute = getDisputeByReviewId(review.id);
+                const canDispute =
+                  canDisputeReviews() &&
+                  review.status === "approved" &&
+                  !existingDispute;
+
+                console.log("Review dispute check:", {
+                  reviewId: review.id,
+                  canDisputeReviews: canDisputeReviews(),
+                  status: review.status,
+                  existingDispute: !!existingDispute,
+                  canDispute,
+                });
+
+                return (
+                  <ReviewCard
+                    key={review.id}
+                    review={review}
+                    faculty={faculty}
+                    showActions={currentUser?.role === "admin"}
+                    showDisputeActions={canDispute}
+                    onApprove={handleApprove}
+                    onReject={handleReject}
+                    onDispute={handleDispute}
+                  />
+                );
+              })}
             </div>
           )}
+        </div>
+      )}
+
+      {/* Dispute Modal */}
+      {showDisputeModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-2xl rounded-xl bg-white p-6 shadow-2xl">
+            <div className="mb-6 flex items-center space-x-3">
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-orange-600 text-white">
+                <HiOutlineExclamationTriangle className="h-6 w-6" />
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-slate-900">
+                  🚨 Dispute Review
+                </h2>
+                <p className="text-sm text-slate-600">
+                  Please provide a reason and evidence for disputing this review
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="mb-2 block text-sm font-semibold text-slate-700">
+                  Reason for Dispute *
+                </label>
+                <textarea
+                  value={disputeReason}
+                  onChange={(e) => setDisputeReason(e.target.value)}
+                  rows={3}
+                  placeholder="Explain why you believe this review should be removed (e.g., false claims, inappropriate content, etc.)"
+                  className="w-full resize-none rounded-lg border-2 border-slate-300 px-4 py-3 text-sm transition-all duration-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 focus:outline-none"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-semibold text-slate-700">
+                  Supporting Evidence (Optional)
+                </label>
+                <textarea
+                  value={disputeEvidence}
+                  onChange={(e) => setDisputeEvidence(e.target.value)}
+                  rows={4}
+                  placeholder="Provide any additional evidence or documentation to support your dispute"
+                  className="w-full resize-none rounded-lg border-2 border-slate-300 px-4 py-3 text-sm transition-all duration-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 focus:outline-none"
+                />
+              </div>
+            </div>
+
+            <div className="mt-6 flex items-center justify-end space-x-4">
+              <button
+                onClick={() => {
+                  setShowDisputeModal(false);
+                  setDisputeReason("");
+                  setDisputeEvidence("");
+                  setSelectedReviewId("");
+                }}
+                className="rounded-lg border-2 border-slate-300 bg-white px-6 py-3 font-semibold text-slate-700 transition-all duration-200 hover:bg-slate-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSubmitDispute}
+                disabled={!disputeReason.trim()}
+                className="rounded-lg bg-orange-600 px-6 py-3 font-semibold text-white shadow-sm transition-all duration-200 hover:bg-orange-700 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                🚨 Submit Dispute
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
