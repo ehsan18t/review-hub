@@ -12,6 +12,7 @@ import {
   HiOutlineCheckCircle,
   HiOutlineClock,
   HiOutlineLightBulb,
+  HiOutlineRefresh,
   HiOutlineStar,
   HiOutlineTrendingUp,
   HiOutlineUsers,
@@ -150,7 +151,7 @@ const EnhancedAIInsightsPanel: React.FC<{ faculty: Faculty }> = ({
   return (
     <div className="rounded-xl border border-slate-200 bg-white shadow-sm">
       {/* Header */}
-      <div className="border-b border-slate-200 p-6">
+      <div className="flex items-start justify-between border-b border-slate-200 p-6">
         <div className="flex items-center space-x-3">
           <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-purple-500 to-purple-600 text-white">
             <span className="text-xl">🤖</span>
@@ -163,6 +164,12 @@ const EnhancedAIInsightsPanel: React.FC<{ faculty: Faculty }> = ({
               Personalized recommendations to enhance your teaching
             </p>
           </div>
+        </div>
+        <div>
+          <button className="mt-4 inline-flex items-center space-x-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-blue-700">
+            <HiOutlineRefresh className="h-5 w-5" />
+            <span>Refresh Insights</span>
+          </button>
         </div>
       </div>
 
@@ -567,7 +574,6 @@ const FacultyDashboardContent: React.FC = () => {
         {/* Header */}
         <div className="mb-8">
           <h1 className="mb-2 flex items-center space-x-3 text-3xl font-bold text-slate-900">
-            <span>👨‍🏫</span>
             <span>Faculty Dashboard</span>
           </h1>
           <p className="text-slate-600">
