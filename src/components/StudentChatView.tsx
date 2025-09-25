@@ -21,7 +21,8 @@ const StudentChatViewContent: React.FC<StudentChatViewProps> = ({
   } = useApp();
 
   const chat = continuousReviewChats.find((c) => c.accessUrl === accessUrl);
-  const messages = continuousReviewMessages.filter(
+  // 1. Get ALL messages for the chat first.
+  const allMessagesForChat = continuousReviewMessages.filter(
     (m) => m.chatId === chat?.id,
   );
 
@@ -30,8 +31,9 @@ const StudentChatViewContent: React.FC<StudentChatViewProps> = ({
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // Depend on the filtered list to scroll correctly.
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [allMessagesForChat]);
 
   if (!chat) {
     return (
@@ -121,7 +123,17 @@ const StudentChatViewContent: React.FC<StudentChatViewProps> = ({
     setNewMessage("");
   };
 
-  const groupedMessages = groupMessagesByDate(messages);
+  // --- PRIVACY FIX: START ---
+  // 2. Create the `visibleMessages` list. This is the single source of truth for what this student can see.
+  const visibleMessages = allMessagesForChat.filter(
+    (msg) =>
+      msg.studentId === currentUser?.id || // The student's own messages
+      msg.studentId === chat.facultyId, // The faculty's messages
+  );
+
+  // 3. All subsequent data processing uses the pre-filtered `visibleMessages` list.
+  const groupedMessages = groupMessagesByDate(visibleMessages);
+  // --- PRIVACY FIX: END ---
 
   return (
     <div className="flex h-screen bg-slate-50">
@@ -153,8 +165,8 @@ const StudentChatViewContent: React.FC<StudentChatViewProps> = ({
           </div>
         </div>
 
-        {/* Welcome Message */}
-        {messages.length === 0 && (
+        {/* Welcome Message - check visibleMessages length */}
+        {visibleMessages.length === 0 && (
           <div className="border-b border-slate-200 bg-blue-50 px-6 py-4">
             <div className="flex items-start space-x-3">
               <span className="text-2xl">👋</span>
@@ -177,72 +189,98 @@ const StudentChatViewContent: React.FC<StudentChatViewProps> = ({
           </div>
         )}
 
-        {/* Messages */}
+        {/* Messages - uses groupedMessages which is derived from visibleMessages */}
         <div className="flex-1 overflow-y-auto p-6">
-          {Object.entries(groupedMessages).map(([date, dayMessages]) => (
-            <div key={date} className="mb-6">
-              <div className="sticky top-0 z-10 mb-4 text-center">
-                <span className="rounded-full bg-slate-200 px-3 py-1 text-sm font-medium text-slate-600">
-                  {new Date(date).toLocaleDateString("en-US", {
-                    weekday: "long",
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}
-                </span>
-              </div>
+          {visibleMessages.length > 0 ? (
+            Object.entries(groupedMessages).map(([date, dayMessages]) => (
+              <div key={date} className="mb-6">
+                <div className="sticky top-0 z-10 mb-4 text-center">
+                  <span className="rounded-full bg-slate-200 px-3 py-1 text-sm font-medium text-slate-600">
+                    {new Date(date).toLocaleDateString("en-US", {
+                      weekday: "long",
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
+                  </span>
+                </div>
 
-              <div className="space-y-4">
-                {dayMessages.map((message) => {
-                  const isCurrentUser = currentUser?.id === message.studentId;
+                <div className="space-y-4">
+                  {dayMessages.map((message) => {
+                    const isCurrentUser = currentUser?.id === message.studentId;
+                    // Any message that isn't the current user's MUST be the faculty's.
+                    const isFacultyMessage = !isCurrentUser;
 
-                  return (
-                    <div
-                      key={message.id}
-                      className={`flex items-start space-x-3 ${
-                        isCurrentUser ? "flex-row-reverse space-x-reverse" : ""
-                      }`}
-                    >
-                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-sm font-bold text-white">
-                        👤
-                      </div>
+                    return (
                       <div
-                        className={`flex-1 ${isCurrentUser ? "text-right" : ""}`}
+                        key={message.id}
+                        className={`flex items-start space-x-3 ${
+                          isCurrentUser
+                            ? "flex-row-reverse space-x-reverse"
+                            : ""
+                        }`}
                       >
                         <div
-                          className={`flex items-center space-x-2 ${
-                            isCurrentUser
-                              ? "flex-row-reverse space-x-reverse"
-                              : ""
+                          className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold text-white ${
+                            isFacultyMessage ? "bg-emerald-600" : "bg-blue-600"
                           }`}
                         >
-                          <span className="font-semibold text-slate-900">
-                            {isCurrentUser ? "You" : "Anonymous Student"}
-                          </span>
-                          <span className="text-xs text-slate-500">
-                            {message.createdAt.toLocaleTimeString()}
-                          </span>
+                          {isFacultyMessage ? "👨‍🏫" : "👤"}
                         </div>
                         <div
-                          className={`mt-1 ${isCurrentUser ? "text-right" : ""}`}
+                          className={`flex-1 ${
+                            isCurrentUser ? "text-right" : ""
+                          }`}
                         >
                           <div
-                            className={`inline-block max-w-xs rounded-lg px-4 py-2 ${
+                            className={`flex items-center space-x-2 ${
                               isCurrentUser
-                                ? "bg-blue-600 text-white"
-                                : "border border-slate-200 bg-white text-slate-700"
+                                ? "flex-row-reverse space-x-reverse"
+                                : ""
                             }`}
                           >
-                            {message.message}
+                            <span className="font-semibold text-slate-900">
+                              {isCurrentUser ? "You" : "Faculty"}
+                            </span>
+                            <span className="text-xs text-slate-500">
+                              {message.createdAt.toLocaleTimeString()}
+                            </span>
+                          </div>
+                          <div
+                            className={`mt-1 ${
+                              isCurrentUser ? "text-right" : ""
+                            }`}
+                          >
+                            <div
+                              className={`inline-block max-w-xs rounded-lg px-4 py-2 ${
+                                isCurrentUser
+                                  ? "bg-blue-600 text-white"
+                                  : "border border-slate-200 bg-white text-slate-700"
+                              }`}
+                            >
+                              {message.message}
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="flex h-full items-center justify-center">
+              <div className="text-center">
+                <span className="mb-4 block text-6xl">💬</span>
+                <h3 className="mb-2 text-lg font-semibold text-slate-700">
+                  Ready for your feedback
+                </h3>
+                <p className="text-slate-500">
+                  Your messages to the faculty will appear here.
+                </p>
               </div>
             </div>
-          ))}
+          )}
           <div ref={messagesEndRef} />
         </div>
 
