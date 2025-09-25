@@ -34,6 +34,8 @@ export interface Review {
   semester: string;
   year: number;
   status: "pending" | "approved" | "rejected";
+  upvotes?: number;
+  downvotes?: number;
   createdAt: Date;
   isAnonymous: boolean;
   disputeId?: string; // Link to dispute if one exists

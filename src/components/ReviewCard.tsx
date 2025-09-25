@@ -13,7 +13,13 @@ import {
   HiOutlineX,
   HiStar,
 } from "react-icons/hi";
-import { HiOutlineExclamationTriangle } from "react-icons/hi2";
+import {
+  HiHandThumbDown,
+  HiHandThumbUp,
+  HiOutlineExclamationTriangle,
+  HiOutlineHandThumbDown,
+  HiOutlineHandThumbUp,
+} from "react-icons/hi2";
 
 interface ReviewCardProps {
   review: Review;
@@ -39,6 +45,39 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
   const { currentUser } = useApp();
   const facultyInfo = faculty || getFacultyById(review.facultyId);
   const dispute = getDisputeByReviewId(review.id);
+
+  // Mock vote state - in a real app, this would come from the backend
+  const [userVote, setUserVote] = React.useState<"up" | "down" | null>(null);
+  const [upvotes, setUpvotes] = React.useState(review?.upvotes || 0);
+  const [downvotes, setDownvotes] = React.useState(review?.downvotes || 0);
+
+  const handleVote = (voteType: "up" | "down") => {
+    if (!currentUser) return;
+
+    if (userVote === voteType) {
+      // Remove vote
+      setUserVote(null);
+      if (voteType === "up") {
+        setUpvotes((prev) => prev - 1);
+      } else {
+        setDownvotes((prev) => prev - 1);
+      }
+    } else {
+      // Add or change vote
+      if (userVote === "up") {
+        setUpvotes((prev) => prev - 1);
+      } else if (userVote === "down") {
+        setDownvotes((prev) => prev - 1);
+      }
+
+      setUserVote(voteType);
+      if (voteType === "up") {
+        setUpvotes((prev) => prev + 1);
+      } else {
+        setDownvotes((prev) => prev + 1);
+      }
+    }
+  };
 
   const renderStars = (rating: number) => {
     return (
@@ -257,6 +296,45 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
                 <span>View Dispute</span>
               </a>
             )}
+
+          {/* Vote Buttons */}
+          {currentUser && review.status === "approved" && (
+            <div className="flex items-center space-x-1 border-l border-slate-200 pl-3">
+              <button
+                onClick={() => handleVote("up")}
+                className={`inline-flex cursor-pointer items-center space-x-1 rounded-lg px-2 py-1 text-sm font-medium transition-all duration-200 focus:ring-2 focus:outline-none ${
+                  userVote === "up"
+                    ? "bg-emerald-100 text-emerald-700 focus:ring-emerald-200"
+                    : "text-slate-600 hover:bg-slate-100 hover:text-emerald-600 focus:ring-slate-200"
+                }`}
+                disabled={!currentUser}
+              >
+                {userVote === "up" ? (
+                  <HiHandThumbUp className="h-4 w-4" />
+                ) : (
+                  <HiOutlineHandThumbUp className="h-4 w-4" />
+                )}
+                <span>{upvotes}</span>
+              </button>
+
+              <button
+                onClick={() => handleVote("down")}
+                className={`inline-flex cursor-pointer items-center space-x-1 rounded-lg px-2 py-1 text-sm font-medium transition-all duration-200 focus:ring-2 focus:outline-none ${
+                  userVote === "down"
+                    ? "bg-red-100 text-red-700 focus:ring-red-200"
+                    : "text-slate-600 hover:bg-slate-100 hover:text-red-600 focus:ring-slate-200"
+                }`}
+                disabled={!currentUser}
+              >
+                {userVote === "down" ? (
+                  <HiHandThumbDown className="h-4 w-4" />
+                ) : (
+                  <HiOutlineHandThumbDown className="h-4 w-4" />
+                )}
+                <span>{downvotes}</span>
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Admin Actions */}
